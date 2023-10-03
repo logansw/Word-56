@@ -3,15 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using TMPro;
+using System.Text;
 
 public class WordManager : MonoBehaviour {
     public List<string> FiveLetterWords;
     public List<string> SixLetterWords;
     public string WordA;
     public string WordB;
+    public TMP_Text WordAText;
+    public TMP_Text WordBText;
 
     void Start() {
         InitializeWords();
+        WordAText.text = "_ _ _ _ _";
+        WordBText.text = "_ _ _ _ _ _";
+    }
+
+    void OnEnable() {
+        Letter.e_OnLetterClicked += OnLetterClicked;
+    }
+
+    void OnDisable() {
+        Letter.e_OnLetterClicked -= OnLetterClicked;
     }
 
     private void InitializeWords() {
@@ -32,7 +46,7 @@ public class WordManager : MonoBehaviour {
         SixLetterWords = new List<string>();
         string filepathSix = Application.dataPath + "/Resources/SixLetterWords.txt";
         try {
-            using (StreamReader reader = new StreamReader(filepathFive)) {
+            using (StreamReader reader = new StreamReader(filepathSix)) {
                 while (!reader.EndOfStream) {
                     string line = reader.ReadLine();
                     string[] words = line.Split('\t');
@@ -65,10 +79,70 @@ public class WordManager : MonoBehaviour {
     private int CountVowels(string word) {
         int count = 0;
         foreach (char c in word) {
-            if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            if (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U') {
                 count++;
             }
         }
         return count;
+    }
+
+    private void OnLetterClicked(Letter letter) {
+        if (GameManager.s_instance.State == GameState.Guess) {
+            switch (letter.State) {
+                case LetterState.Default:
+                    HandleGuess(letter);
+                    break;
+                case LetterState.Correct:
+                    // Play dull sound
+                    // Inform the player why this letter cannot be pressed
+                    break;
+                case LetterState.Disabled:
+                    // Play dull sound
+                    // Inform the player why this letter is disabled
+                    break;
+            }
+        } else if (GameManager.s_instance.State == GameState.Solve) {
+
+        }
+    }
+
+    private void HandleGuess(Letter letter) {
+        GameManager.s_instance.Score -= letter.Cost;
+        bool found = false;
+        for (int i = 0; i < WordA.Length; i++) {
+            if (WordA[i] == letter.Character) {
+                found = true;
+                RevealLetter(0, i);
+            }
+        }
+
+        for (int i = 0; i < WordB.Length; i++) {
+            if (WordB[i] == letter.Character) {
+                found = true;
+                RevealLetter(1, i);
+            }
+        }
+
+        if (found) {
+            letter.State = LetterState.Correct;
+            // Play correct sound
+        } else {
+            letter.State = LetterState.Disabled;
+            // Play incorrect sound
+        }
+    }
+
+    private void RevealLetter(int wordIndex, int characterIndex) {
+        if (wordIndex == 0) {
+            char c = WordA[characterIndex];
+            StringBuilder sb = new StringBuilder(WordAText.text);
+            sb[characterIndex * 2] = c;
+            WordAText.text = sb.ToString();
+        } else {
+            char c = WordB[characterIndex];
+            StringBuilder sb = new StringBuilder(WordBText.text);
+            sb[characterIndex * 2] = c;
+            WordBText.text = sb.ToString();
+        }
     }
 }

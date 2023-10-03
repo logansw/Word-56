@@ -224,6 +224,7 @@ MonoBehaviour:
   Cost: 0
   _text: {fileID: 4101141850271931051}
   _collider: {fileID: 4101141850780326452}
+  _spriteRenderer: {fileID: 4101141850780326455}
 --- !u!212 &4101141850780326455
 SpriteRenderer:
   m_ObjectHideFlags: 0
