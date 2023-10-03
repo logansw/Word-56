@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class ConfigurationManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    // Static
+    public static ConfigurationManager s_instance;
+
+    // Public
+    public bool ChallengeMode;
+    public int SeriesLength;
+
+    void Awake() {
+        s_instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void SetChallengeMode(bool enabled) {
+        ChallengeMode = enabled;
+    }
+
+    public void SetSeriesLength(int numberOfRounds) {
+        SeriesLength = numberOfRounds;
     }
 }

@@ -22,7 +22,7 @@ poise	labor	havoc	adult	extra	spasm	cider	mucus	exile	inept	unfit	wrist
 mafia	bloat	parch	nomad	azure	stamp	edict	scorn	seize	resin	fruit	virus
 fatal	brawl	patch	radon	asset	annoy	dicey	crown	jewel	siren	funky	ritzy
 fauna	blast	crash	stand	essay	apron	dunce	corny	pekoe	inert	floor	sixty
-pique	rumba	chart	sandy	waste	arson	d�cor	count	evoke	sinew	flour	witty
+pique	rumba	chart	sandy	waste	arson	decor	count	evoke	sinew	flour	witty
 pagan	baron	watch	adopt	yeast	rayon	codex	scoop	elope	swine	forum	jumpy
 guava	baton	yacht	today	suave	nasty	decoy	court	sleep	twine	funny	juror
 aloha	urban	lilac	squad	staff	taunt	child	scout	lever	unite	futon	joust
@@ -77,7 +77,7 @@ badly	cream	ladle	email	viola	elbow	curve	flood	guest	metro	limit
 brand	ocean	medal	alien	anvil	ruble	finch	dough	sheik	mover	visit
 swipe	canoe	eland	aisle	quail	umber	flick	digit	helix	mouse	joint
 board	pecan	pedal	maize	rival	ebony	flock	rigid	whine	totem	joist
-broad	crane	alder	na�ve	vital	booze	focus	guild	heist	empty	kiosk
+broad	crane	alder	naive	vital	booze	focus	guild	heist	empty	kiosk
 fable	enact	delta	sepia	amino	probe	cough	dingo	white	merry	silky
 bagel	space	delay	waive	axiom	boxer	icing	gourd	hello	serum	pinky
 gable	crate	amend	ankle	piano	rebus	logic	humid	shell	ozone	quirk
