@@ -8,9 +8,10 @@ public class Letter : MonoBehaviour
 {
     public char Character;
     public PhonemicType Type => (Character == 'A' || Character == 'E' || Character == 'I' || Character == 'O' || Character == 'U') ? PhonemicType.Vowel : PhonemicType.Consonant;
-    public LetterState State;
+    public LetterState LetterState;
     public int Cost;
     [SerializeField] private TMP_Text _text;
+    [SerializeField] private TMP_Text _costText;
     [SerializeField] private BoxCollider2D _collider;
     [SerializeField] private SpriteRenderer _spriteRenderer;
     private bool _updateQueued;
@@ -21,20 +22,22 @@ public class Letter : MonoBehaviour
     public void Initialize() {
         _text.text = Character.ToString();
         if (Type == PhonemicType.Vowel) {
-            State = LetterState.Disabled;
+            LetterState = LetterState.Disabled;
         } else {
-            State = LetterState.Default;
+            LetterState = LetterState.Default;
         }
+        Cost = 250;
+        _costText.text = Cost.ToString();
         CheckForUpdate();
     }
 
     void Update() {
-        if (GameManager.s_instance.State == GameState.PreStart || GameManager.s_instance.State == GameState.GameOver) {
+        if (StateController.GetCurrentState() == State.StateType.PreStart || StateController.GetCurrentState() == State.StateType.GameOver) {
             return;
         }
         if (_updateQueued) {
             _updateQueued = false;
-            switch (State) {
+            switch (LetterState) {
                 case LetterState.Default:
                     _spriteRenderer.color = Color.white;
                     break;
@@ -45,6 +48,7 @@ public class Letter : MonoBehaviour
                     _spriteRenderer.color = Color.green;
                     break;
             }
+            _costText.text = Cost.ToString();
         }
 
         if (Input.touchCount > 0) {

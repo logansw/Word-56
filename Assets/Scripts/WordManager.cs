@@ -13,12 +13,7 @@ public class WordManager : MonoBehaviour {
     public string WordB;
     public TMP_Text WordAText;
     public TMP_Text WordBText;
-
-    void Start() {
-        InitializeWords();
-        WordAText.text = "_ _ _ _ _";
-        WordBText.text = "_ _ _ _ _ _";
-    }
+    private bool _initialized;
 
     void OnEnable() {
         Letter.e_OnLetterClicked += OnLetterClicked;
@@ -28,7 +23,10 @@ public class WordManager : MonoBehaviour {
         Letter.e_OnLetterClicked -= OnLetterClicked;
     }
 
-    private void InitializeWords() {
+    public void InitializeWords() {
+        if (_initialized) { return; }
+        WordAText.text = "_ _ _ _ _";
+        WordBText.text = "_ _ _ _ _ _";
         FiveLetterWords = new List<string>();
         string filepathFive = Application.dataPath + "/Resources/FiveLetterWords.txt";
         try {
@@ -56,6 +54,8 @@ public class WordManager : MonoBehaviour {
         } catch (Exception e) {
             Debug.Log(e.Message);
         }
+
+        _initialized = true;
     }
 
     public void ChooseWords(int vowelCount) {
@@ -87,8 +87,8 @@ public class WordManager : MonoBehaviour {
     }
 
     private void OnLetterClicked(Letter letter) {
-        if (GameManager.s_instance.State == GameState.Guess) {
-            switch (letter.State) {
+        if (StateController.GetCurrentState() == State.StateType.Buy) {
+            switch (letter.LetterState) {
                 case LetterState.Default:
                     HandleGuess(letter);
                     break;
@@ -101,13 +101,15 @@ public class WordManager : MonoBehaviour {
                     // Inform the player why this letter is disabled
                     break;
             }
-        } else if (GameManager.s_instance.State == GameState.Solve) {
+        } else if (StateController.GetCurrentState() == State.StateType.Solve) {
 
         }
     }
 
     private void HandleGuess(Letter letter) {
+        Debug.Log("HandleGuess");
         GameManager.s_instance.Score -= letter.Cost;
+        GameManager.s_instance.LettersPurchased++;
         bool found = false;
         for (int i = 0; i < WordA.Length; i++) {
             if (WordA[i] == letter.Character) {
@@ -124,10 +126,10 @@ public class WordManager : MonoBehaviour {
         }
 
         if (found) {
-            letter.State = LetterState.Correct;
+            letter.LetterState = LetterState.Correct;
             // Play correct sound
         } else {
-            letter.State = LetterState.Disabled;
+            letter.LetterState = LetterState.Disabled;
             // Play incorrect sound
         }
     }
