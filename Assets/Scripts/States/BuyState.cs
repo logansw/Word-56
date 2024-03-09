@@ -18,6 +18,7 @@ public class BuyState : State
     public override void UpdateState(StateController stateController)
     {
         // On letter pressed, advance the round. Re-enter BuyState.
+        stateController.ChangeState(stateController.BuyState);
     }
     public override void OnExit(StateController stateController)
     {

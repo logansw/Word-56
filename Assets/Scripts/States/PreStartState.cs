@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PreStartState : State
 {
+    [SerializeField] private Button _startbutton;
+    [SerializeField] private GameObject _screenMain;
+
     public PreStartState() {
         GameState = StateType.PreStart;
     }
     public override void OnEnter(StateController stateController)
     {
-        GameManager.s_instance.Score = 30000;
-        GameManager.s_instance.LettersPurchased = 0;
+        _screenMain.SetActive(true);
+        _startbutton.interactable = true;
         WordManager wordManager = GameObject.Find("WordManager").GetComponent<WordManager>();
-        wordManager.InitializeWords();
+        wordManager.Initialize();
+        wordManager.Reset();
         if (ConfigurationManager.s_instance.ChallengeMode) {
             wordManager.ChooseWords(Random.Range(5, 6));
         } else {
@@ -25,6 +30,6 @@ public class PreStartState : State
     }
     public override void OnExit(StateController stateController)
     {
-        // Nothing
+        _startbutton.interactable = false;
     }
 }

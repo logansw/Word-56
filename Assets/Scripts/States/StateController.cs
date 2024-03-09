@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Controls the state of the game.
@@ -12,10 +14,12 @@ public class StateController : MonoBehaviour
     // Internal
     public State CurrentState;
     // States
-    public PreStartState PreStartState = new PreStartState();
-    public BuyState BuyState = new BuyState();
-    public SolveState SolveState = new SolveState();
-    public GameOverState GameOverState = new GameOverState();
+    public PreStartState PreStartState;
+    public BuyState BuyState;
+    public SolveState SolveState;
+    public GameOverState GameOverState;
+    public IntermissionState IntermissionState;
+    private State _previousState;
 
     void Awake() {
         s_instance = this;
@@ -39,6 +43,7 @@ public class StateController : MonoBehaviour
         if (CurrentState != null) {
             CurrentState.OnExit(this);
         }
+        _previousState = CurrentState;
         CurrentState = newState;
         CurrentState.OnEnter(this);
     }
@@ -46,29 +51,8 @@ public class StateController : MonoBehaviour
     public static State.StateType GetCurrentState() {
         return s_instance.CurrentState.GameState;
     }
-}
 
-public class State
-{
-    public StateType GameState;
-    public virtual void OnEnter(StateController stateController)
-    {
-
-    }
-    public virtual void UpdateState(StateController stateController)
-    {
-
-    }
-    public virtual void OnExit(StateController stateController)
-    {
-
-    }
-
-    [System.Serializable]
-    public enum StateType {
-        PreStart,
-        Buy,
-        Solve,
-        GameOver
+    public void ChangeToPreviousState() {
+        ChangeState(_previousState);
     }
 }
