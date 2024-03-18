@@ -2620,6 +2620,7 @@ MonoBehaviour:
   VowelPurchasedLastRound: 0
   _guessCounterText: {fileID: 1825246676}
   _solveAttemptText: {fileID: 1975826316}
+  _solveCostText: {fileID: 344917119}
   Letters: []
   RoundScore: 0
   _enterButton: {fileID: 1464641910}
@@ -2628,6 +2629,7 @@ MonoBehaviour:
   SolvePurchases: 0
   _scoreBreakdownPrefab: {fileID: 3395157212072221299, guid: 6a7d96500cc72495bbfea71ae15008b5, type: 3}
   _intermisisonCanvas: {fileID: 322164055}
+  SolvePurchaseCost: 0
 --- !u!4 &541894803
 Transform:
   m_ObjectHideFlags: 0
@@ -3591,7 +3593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1090098133
 Transform:
   m_ObjectHideFlags: 0

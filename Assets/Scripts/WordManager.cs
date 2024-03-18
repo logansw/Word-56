@@ -25,6 +25,7 @@ public class WordManager : MonoBehaviour {
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
     [SerializeField] private TMP_Text _solveAttemptText;
+    [SerializeField] private TMP_Text _solveCostText;
     private string _solveAttempt;
     public List<Letter> Letters;
     public int RoundScore;
@@ -36,6 +37,7 @@ public class WordManager : MonoBehaviour {
     public int SolvePurchases;
     [SerializeField] private ScoreBreakdown _scoreBreakdownPrefab;
     [SerializeField] private Canvas _intermisisonCanvas;
+    public int SolvePurchaseCost;
 
     void Awake() {
         s_instance = this;
@@ -44,7 +46,7 @@ public class WordManager : MonoBehaviour {
     public void StartRound() {
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         _guessCounterText.text = "Guesses: 0";
-        RoundScore = 30000;
+        RoundScore = 30_000;
         _startTime = DateTime.Now;
     }
 
@@ -105,6 +107,8 @@ public class WordManager : MonoBehaviour {
         SolvePurchases = 0;
         _solveIndex = 0;
         _guessCounterText.text = "Guesses: 0";
+        SolvePurchaseCost = 700;
+        _solveCostText.text = $"Solve ({SolvePurchaseCost})";
     }
 
     public void ChooseWords(int vowelCount) {
@@ -170,7 +174,8 @@ public class WordManager : MonoBehaviour {
     }
 
     public void SubmitSolveAttempt() {
-        SolvePurchases += 1000;
+        SolvePurchases += SolvePurchaseCost;
+        // Check if the solve attempt is correct
         if (_solveAttempt.Substring(0, 5) == WordA && _solveAttempt.Substring(5, 6) == WordB) {
             TimeSpan timeSpan = DateTime.Now - _startTime;
             int seconds = (int)timeSpan.TotalSeconds;
@@ -193,6 +198,8 @@ public class WordManager : MonoBehaviour {
             _solveAttempt = "";
             _solveIndex = 0;
             StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
+            SolvePurchaseCost += 100;
+            _solveCostText.text = $"Solve ({SolvePurchaseCost})";
         }
     }
 
