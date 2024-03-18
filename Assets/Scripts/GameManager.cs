@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     // Public
     public int CurrentRound;
     public List<int> LetterPurchases;
-    public List<int> TimePenalties;
+    public List<int> TimeElapses;
     public List<int> SolvePurchases;
     [SerializeField] private GameObject _screenMain;
 
@@ -22,13 +22,13 @@ public class GameManager : MonoBehaviour
     void Start() {
         CurrentRound = 1;
         LetterPurchases = new List<int>();
-        TimePenalties = new List<int>();
+        TimeElapses = new List<int>();
         SolvePurchases = new List<int>();
     }
 
     public void Continue() {
         LetterPurchases.Add(WordManager.s_instance.LetterPurchases);
-        TimePenalties.Add(WordManager.s_instance.TimePenalty);
+        TimeElapses.Add(WordManager.s_instance.TimeElapsed);
         SolvePurchases.Add(WordManager.s_instance.SolvePurchases);
         CurrentRound++;
         if (CurrentRound > ConfigurationManager.s_instance.SeriesLength) {
@@ -43,7 +43,6 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < ConfigurationManager.s_instance.SeriesLength; i++) {
             finalScore += WordManager.s_instance.RoundScore;
             finalScore -= LetterPurchases[i];
-            finalScore -= TimePenalties[i];
             finalScore -= SolvePurchases[i];
         }
         return finalScore;

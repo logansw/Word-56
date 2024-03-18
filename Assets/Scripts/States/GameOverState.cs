@@ -32,9 +32,9 @@ public class GameOverState : State
             scoreBreakdown.transform.localPosition = new Vector3(-(_canvas.pixelRect.width / 2f * 0.9f) + (i * width) + width / 2f, 80, 0);
             int roundNumber = i + 1;
             int letterPurchases = GameManager.s_instance.LetterPurchases[i];
-            int timePenalty = GameManager.s_instance.TimePenalties[i];
+            int timeElapsed = GameManager.s_instance.TimeElapses[i];
             int solvePurchases = GameManager.s_instance.SolvePurchases[i];
-            scoreBreakdown.Initialize(roundNumber, letterPurchases, timePenalty, solvePurchases);
+            scoreBreakdown.Initialize(roundNumber, letterPurchases, timeElapsed, solvePurchases);
         }
     }
 

@@ -32,7 +32,7 @@ public class WordManager : MonoBehaviour {
     [SerializeField] private Button _enterButton;
     private DateTime _startTime;
     public int LetterPurchases;
-    public int TimePenalty;
+    public int TimeElapsed;
     public int SolvePurchases;
     [SerializeField] private ScoreBreakdown _scoreBreakdownPrefab;
     [SerializeField] private Canvas _intermisisonCanvas;
@@ -59,7 +59,7 @@ public class WordManager : MonoBehaviour {
     public void Initialize() {
         if (_initialized) { return; }
         FiveLetterWords = new List<string>();
-        string filepathFive = Application.dataPath + "/Resources/FiveLetterWords.txt";
+        string filepathFive = Application.streamingAssetsPath + "/FiveLetterWords.txt";
         try {
             using (StreamReader reader = new StreamReader(filepathFive)) {
                 while (!reader.EndOfStream) {
@@ -73,7 +73,7 @@ public class WordManager : MonoBehaviour {
         }
 
         SixLetterWords = new List<string>();
-        string filepathSix = Application.dataPath + "/Resources/SixLetterWords.txt";
+        string filepathSix = Application.streamingAssetsPath + "/SixLetterWords.txt";
         try {
             using (StreamReader reader = new StreamReader(filepathSix)) {
                 while (!reader.EndOfStream) {
@@ -101,7 +101,7 @@ public class WordManager : MonoBehaviour {
         LettersPurchased = 0;
         VowelsPurchased = 0;
         LetterPurchases = 0;
-        TimePenalty = 0;
+        TimeElapsed = 0;
         SolvePurchases = 0;
         _solveIndex = 0;
         _guessCounterText.text = "Guesses: 0";
@@ -174,13 +174,13 @@ public class WordManager : MonoBehaviour {
         if (_solveAttempt.Substring(0, 5) == WordA && _solveAttempt.Substring(5, 6) == WordB) {
             TimeSpan timeSpan = DateTime.Now - _startTime;
             int seconds = (int)timeSpan.TotalSeconds;
-            TimePenalty = seconds * 10;
+            TimeElapsed = seconds;
             ScoreBreakdown scoreBreakdown = Instantiate(_scoreBreakdownPrefab, _intermisisonCanvas.transform);
             scoreBreakdown.transform.localPosition = new Vector3(0, 80, 0);
-            scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimePenalty, SolvePurchases);
+            scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimeElapsed, SolvePurchases);
             if (ConfigurationManager.s_instance.SeriesLength == 1) {
                 GameManager.s_instance.LetterPurchases.Add(LetterPurchases);
-                GameManager.s_instance.TimePenalties.Add(TimePenalty);
+                GameManager.s_instance.TimeElapses.Add(TimeElapsed);
                 GameManager.s_instance.SolvePurchases.Add(SolvePurchases);
                 
                 StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);

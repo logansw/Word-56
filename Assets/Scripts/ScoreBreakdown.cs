@@ -10,15 +10,15 @@ public class ScoreBreakdown : MonoBehaviour
     [SerializeField] private TMP_Text _roundNumberText;
     [SerializeField] private TMP_Text _totalScoreText;
     [SerializeField] private TMP_Text _letterPurchasesText;
-    [SerializeField] private TMP_Text _timePenaltyText;
+    [SerializeField] private TMP_Text _timeElapsedText;
     [SerializeField] private TMP_Text _solvePurchasesText;
 
-    public void Initialize(int roundNumber, int letterPurchases, int timePenalty, int solvePurchases) {
+    public void Initialize(int roundNumber, int letterPurchases, int timeElapsed, int solvePurchases) {
         _roundNumberText.text = "Round " + roundNumber;
         _letterPurchasesText.text = "Letter Purchases: -" + letterPurchases.ToString();
-        _timePenaltyText.text = "Time Penalty: - " + timePenalty.ToString();
+        _timeElapsedText.text = "Time Elapsed: " + timeElapsed.ToString();
         _solvePurchasesText.text = "Solve Purchases: -" + solvePurchases.ToString();
-        _totalScoreText.text = "Round Total: " + (WordManager.s_instance.RoundScore - letterPurchases - timePenalty - solvePurchases);
+        _totalScoreText.text = "Round Total: " + (WordManager.s_instance.RoundScore - letterPurchases - solvePurchases);
     }
 
     public void ScaleToWidth(float width) {
