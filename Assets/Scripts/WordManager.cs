@@ -249,8 +249,10 @@ public class WordManager : MonoBehaviour {
         if (letter.IsVowel()) {
             VowelsPurchased++;
             VowelPurchasedLastRound = true;
+            IncreaseVowelCosts();
         } else {
             VowelPurchasedLastRound = false;
+            IncreaseConsonantCosts();
         }
     }
 
@@ -276,8 +278,44 @@ public class WordManager : MonoBehaviour {
     }
 
     private void RenderLetters() {
+        if (LettersPurchased == 1 || LettersPurchased == 2) {
+            foreach (Letter letter in Letters) {
+                letter.SetCostsToFaceValue();
+            }
+        }
         foreach (Letter letter in Letters) {
             letter.RenderLetter();
+        }
+    }
+
+    private void IncreaseVowelCosts() {
+        foreach (Letter letter in Letters) {
+            if (letter.IsVowel()) {
+                letter.IncreaseCost(25);
+            }
+        }
+    }
+
+    private void IncreaseConsonantCosts() {
+        int increaseAmount;
+        switch (LettersPurchased) {
+            case int i when i >= 3 && i < 9:
+                increaseAmount = 25;
+                break;
+            case int i when i >= 9 && i < 15:
+                increaseAmount = 50;
+                break;
+            case int i when i >= 15:
+                increaseAmount = 75;
+                break;
+            default:
+                increaseAmount = 0;
+                break;
+        }
+        foreach (Letter letter in Letters) {
+            if (!letter.IsVowel()) {
+                letter.IncreaseCost(increaseAmount);
+            }
         }
     }
 }

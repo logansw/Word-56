@@ -29,6 +29,8 @@ public class Letter : MonoBehaviour
 
     public delegate void LetterClicked(Letter letter);
     public static LetterClicked e_OnLetterClicked;
+    public int InitialConsonantCost = 100;
+    public int InitialVowelCost = 300;
 
     void Awake() {
         if (!s_dictionaryInitialized) {
@@ -38,7 +40,6 @@ public class Letter : MonoBehaviour
             RegisterLetterCosts(_setFour, 275);
             RegisterLetterCosts(_setFive, 300);
             RegisterLetterCosts(_setSix, 325);
-            RegisterLetterCosts(_vowels, 1000);
             s_dictionaryInitialized = true;
         }
     }
@@ -62,12 +63,18 @@ public class Letter : MonoBehaviour
             LetterState = LetterState.Default;
         }
         if (s_consonantCostMap.ContainsKey(Character)) {
-            Cost = s_consonantCostMap[Character];
-        } else {
-            Cost = 0;
+            Cost = InitialConsonantCost;
+        } else if (IsVowel()){
+            Cost = InitialVowelCost;
         }
         _costText.text = Cost.ToString();
         RenderLetter();
+    }
+
+    public void SetCostsToFaceValue() {
+        if (s_consonantCostMap.ContainsKey(Character)) {
+            Cost = s_consonantCostMap[Character];
+        }
     }
 
     public void Reset() {
@@ -147,6 +154,11 @@ public class Letter : MonoBehaviour
 
     public bool IsVowel() {
         return Character == 'A' || Character == 'E' || Character == 'I' || Character == 'O' || Character == 'U';
+    }
+
+    public void IncreaseCost(int amount) {
+        Cost += amount;
+        RenderLetter();
     }
 }
 
