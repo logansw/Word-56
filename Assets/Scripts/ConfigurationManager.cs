@@ -11,6 +11,17 @@ public class ConfigurationManager : MonoBehaviour
     // Public
     public bool ChallengeMode;
     public int SeriesLength;
+    public bool ConsecutiveVowelsEnabled;
+    public int StartingScore = 30_000;
+    public int InflationRateOne = 25;
+    public int InflationRateTwo = 50;
+    public int InflationRateThree = 75;
+    public int PeriodOneStart = 3;
+    public int PeriodTwoStart = 9;
+    public int PeriodThreeStart = 15;
+    public int InflationRateVowel = 25;
+    public int InflationRateSolve = 100;
+    public int SolveStartCost = 700;
 
     // External References
     [SerializeField] private UnityEngine.UI.Image[] _singleButtons;

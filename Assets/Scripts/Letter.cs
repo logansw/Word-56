@@ -84,6 +84,12 @@ public class Letter : MonoBehaviour
         } else {
             LetterState = LetterState.Default;
         }
+        if (s_consonantCostMap.ContainsKey(Character)) {
+            Cost = InitialConsonantCost;
+        } else if (IsVowel()){
+            Cost = InitialVowelCost;
+        }
+        _costText.text = Cost.ToString();
         RenderLetter();
     }
 

@@ -5503,6 +5503,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ChallengeMode: 0
   SeriesLength: 0
+  ConsecutiveVowelsEnabled: 0
+  StartingScore: 30000
+  InflationRateOne: 25
+  InflationRateTwo: 50
+  InflationRateThree: 75
+  PeriodOneStart: 3
+  PeriodTwoStart: 9
+  PeriodThreeStart: 15
+  InflationRateVowel: 25
+  InflationRateSolve: 100
+  SolveStartCost: 700
   _singleButtons:
   - {fileID: 1832588717}
   - {fileID: 1206417894}

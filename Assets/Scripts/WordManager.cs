@@ -38,15 +38,20 @@ public class WordManager : MonoBehaviour {
     [SerializeField] private ScoreBreakdown _scoreBreakdownPrefab;
     [SerializeField] private Canvas _intermisisonCanvas;
     public int SolvePurchaseCost;
+    private ConfigurationManager _configMan;
 
     void Awake() {
         s_instance = this;
     }
 
+    void Start() {
+        _configMan = ConfigurationManager.s_instance;
+    }
+
     public void StartRound() {
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         _guessCounterText.text = "Guesses: 0";
-        RoundScore = 30_000;
+        RoundScore = _configMan.StartingScore;
         _startTime = DateTime.Now;
     }
 
@@ -92,6 +97,7 @@ public class WordManager : MonoBehaviour {
     }
 
     public void Reset() {
+        _configMan ??= ConfigurationManager.s_instance;
         LettersFound = new HashSet<Letter>();
         WordAText.text = "_ _ _ _ _";
         WordBText.text = "_ _ _ _ _ _";
@@ -107,7 +113,7 @@ public class WordManager : MonoBehaviour {
         SolvePurchases = 0;
         _solveIndex = 0;
         _guessCounterText.text = "Guesses: 0";
-        SolvePurchaseCost = 700;
+        SolvePurchaseCost = _configMan.SolveStartCost;
         _solveCostText.text = $"Solve ({SolvePurchaseCost})";
     }
 
@@ -183,7 +189,7 @@ public class WordManager : MonoBehaviour {
             ScoreBreakdown scoreBreakdown = Instantiate(_scoreBreakdownPrefab, _intermisisonCanvas.transform);
             scoreBreakdown.transform.localPosition = new Vector3(0, 80, 0);
             scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimeElapsed, SolvePurchases);
-            if (ConfigurationManager.s_instance.SeriesLength == 1) {
+            if (_configMan.SeriesLength == 1) {
                 GameManager.s_instance.LetterPurchases.Add(LetterPurchases);
                 GameManager.s_instance.TimeElapses.Add(TimeElapsed);
                 GameManager.s_instance.SolvePurchases.Add(SolvePurchases);
@@ -198,7 +204,7 @@ public class WordManager : MonoBehaviour {
             _solveAttempt = "";
             _solveIndex = 0;
             StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
-            SolvePurchaseCost += 100;
+            SolvePurchaseCost += _configMan.InflationRateSolve;
             _solveCostText.text = $"Solve ({SolvePurchaseCost})";
         }
     }
@@ -260,15 +266,9 @@ public class WordManager : MonoBehaviour {
         foreach (Letter letter in Letters) {
             LetterState state = LetterState.Default;
             if (letter.Purchased) {
-                state = WordManager.s_instance.LettersFound.Contains(letter) ? LetterState.Correct : LetterState.Incorrect;
+                state = s_instance.LettersFound.Contains(letter) ? LetterState.Correct : LetterState.Incorrect;
             } else if (letter.IsVowel()) {
-                if (LettersPurchased < 5) {
-                    state = LetterState.Disabled;
-                }
-                if (VowelPurchasedLastRound) {
-                    state = LetterState.Disabled;
-                }
-                if (LettersPurchased < 10 && VowelsPurchased >= 1) {
+                if (_configMan.ConsecutiveVowelsEnabled && VowelPurchasedLastRound) {
                     state = LetterState.Disabled;
                 }
             }
@@ -291,7 +291,7 @@ public class WordManager : MonoBehaviour {
     private void IncreaseVowelCosts() {
         foreach (Letter letter in Letters) {
             if (letter.IsVowel()) {
-                letter.IncreaseCost(25);
+                letter.IncreaseCost(_configMan.InflationRateVowel);
             }
         }
     }
@@ -299,14 +299,14 @@ public class WordManager : MonoBehaviour {
     private void IncreaseConsonantCosts() {
         int increaseAmount;
         switch (LettersPurchased) {
-            case int i when i >= 3 && i < 9:
-                increaseAmount = 25;
+            case int i when i >= _configMan.PeriodOneStart && i < _configMan.PeriodTwoStart:
+                increaseAmount = _configMan.InflationRateOne;
                 break;
-            case int i when i >= 9 && i < 15:
-                increaseAmount = 50;
+            case int i when i >= _configMan.PeriodTwoStart && i < _configMan.PeriodThreeStart:
+                increaseAmount = _configMan.InflationRateTwo;
                 break;
-            case int i when i >= 15:
-                increaseAmount = 75;
+            case int i when i >= _configMan.PeriodThreeStart:
+                increaseAmount = _configMan.InflationRateThree;
                 break;
             default:
                 increaseAmount = 0;

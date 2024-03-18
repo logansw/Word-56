@@ -732,6 +732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rectTransform: {fileID: 7632176313639813555}
   _roundNumberText: {fileID: 647451583514643207}
+  _startingScoreText: {fileID: 4314825995522031868}
   _totalScoreText: {fileID: 4314825994819103267}
   _letterPurchasesText: {fileID: 4314825996072252115}
   _timeElapsedText: {fileID: 4314825994799702795}
