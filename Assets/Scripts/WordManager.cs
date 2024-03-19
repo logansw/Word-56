@@ -98,14 +98,16 @@ public class WordManager : MonoBehaviour {
         _initialized = true;
     }
 
-    public void Reset() {
+    public void Reset()
+    {
         _configMan ??= ConfigurationManager.s_instance;
         LettersFound = new HashSet<Letter>();
         WordAText.text = "_ _ _ _ _";
         WordBText.text = "_ _ _ _ _ _";
         _solveAttempt = "";
         _solveAttemptText.text = "";
-        foreach (Letter letter in Letters) {
+        foreach (Letter letter in Letters)
+        {
             letter.Reset();
         }
         LettersPurchased = 0;
@@ -121,58 +123,78 @@ public class WordManager : MonoBehaviour {
         RoundScore = _configMan.StartingScore;
     }
 
-    public void ChooseWords(int vowelCount) {
+    public void ChooseWords(int vowelCount)
+    {
         int a; int b = 0;
         string wordA = ChooseRandomWord(FiveLetterWords);
         string wordB = "";
         a = CountVowels(wordA);
-        while (a == vowelCount) {
+        while (a == vowelCount)
+        {
             wordA = ChooseRandomWord(FiveLetterWords);
             a = CountVowels(wordA);
         }
-        while (a + b != vowelCount) {
+        while (a + b != vowelCount)
+        {
             wordB = ChooseRandomWord(SixLetterWords);
             b = CountVowels(wordB);
         }
-        if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6) {
+        if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6)
+        {
             Debug.Log("Invalid word lengths.");
         }
         WordA = wordA;
         WordB = wordB;
     }
 
-    private string ChooseRandomWord(List<string> words) {
+    private string ChooseRandomWord(List<string> words)
+    {
         int index = UnityEngine.Random.Range(0, words.Count);
         return words[index];
     }
 
-    private int CountVowels(string word) {
+    private int CountVowels(string word)
+    {
         int count = 0;
-        foreach (char c in word) {
-            if (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U') {
+        foreach (char c in word)
+        {
+            if (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')
+            {
                 count++;
             }
         }
         return count;
     }
 
-    private void OnLetterClicked(Letter letter) {
-        if (StateController.GetCurrentState() == State.StateType.Buy) {
+    private void OnLetterClicked(Letter letter)
+    {
+        if (StateController.GetCurrentState() == State.StateType.Buy)
+        {
             PurchaseLetter(letter);
             HandleGuess(letter);
             _guessCounterText.text = "Guesses: " + LettersPurchased;
             SetLetterStates();
             RenderLetters();
-        } else if (StateController.GetCurrentState() == State.StateType.Solve) {
+        }
+        else if (StateController.GetCurrentState() == State.StateType.Solve)
+        {
             AddLetterToSolveAttempt(letter);
         }
     }
 
-    private void AddLetterToSolveAttempt(Letter letter) {
+    private void AddLetterToSolveAttempt(Letter letter)
+    {
         _solveAttempt += letter.Character;
         _solveIndex++;
         _solveAttemptText.text = _solveAttempt;
         _enterButton.interactable = _solveAttempt.Length == 11;
+    }
+
+    public void ClearSolveAttempt()
+    {
+        _solveAttemptText.text = "";
+        _solveAttempt = "";
+        _solveIndex = 0;
     }
 
     public void DeleteLetterFromSolveAttempt() {
