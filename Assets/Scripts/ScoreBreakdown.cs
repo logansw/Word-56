@@ -20,7 +20,7 @@ public class ScoreBreakdown : MonoBehaviour
         _letterPurchasesText.text = "Letter Purchases: -" + letterPurchases.ToString();
         _timeElapsedText.text = "Time Elapsed: " + timeElapsed.ToString() + "s";
         _solvePurchasesText.text = "Solve Purchases: -" + solvePurchases.ToString();
-        _totalScoreText.text = "Round Total: " + (WordManager.s_instance.RoundScore - letterPurchases - solvePurchases);
+        _totalScoreText.text = "Round Total: " + WordManager.s_instance.RoundScore;
     }
 
     public void ScaleToWidth(float width) {

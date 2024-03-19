@@ -26,6 +26,7 @@ public class WordManager : MonoBehaviour {
     [SerializeField] private TMP_Text _guessCounterText;
     [SerializeField] private TMP_Text _solveAttemptText;
     [SerializeField] private TMP_Text _solveCostText;
+    [SerializeField] private TMP_Text _currentScoreText;
     private string _solveAttempt;
     public List<Letter> Letters;
     public int RoundScore;
@@ -53,6 +54,7 @@ public class WordManager : MonoBehaviour {
         _guessCounterText.text = "Guesses: 0";
         RoundScore = _configMan.StartingScore;
         _startTime = DateTime.Now;
+        RenderCurrentScore();
     }
 
     void OnEnable() {
@@ -115,6 +117,8 @@ public class WordManager : MonoBehaviour {
         _guessCounterText.text = "Guesses: 0";
         SolvePurchaseCost = _configMan.SolveStartCost;
         _solveCostText.text = $"Solve ({SolvePurchaseCost})";
+        _currentScoreText.text = "";
+        RoundScore = _configMan.StartingScore;
     }
 
     public void ChooseWords(int vowelCount) {
@@ -181,6 +185,8 @@ public class WordManager : MonoBehaviour {
 
     public void SubmitSolveAttempt() {
         SolvePurchases += SolvePurchaseCost;
+        RoundScore -= SolvePurchaseCost;
+        RenderCurrentScore();
         // Check if the solve attempt is correct
         if (_solveAttempt.Substring(0, 5) == WordA && _solveAttempt.Substring(5, 6) == WordB) {
             TimeSpan timeSpan = DateTime.Now - _startTime;
@@ -252,6 +258,7 @@ public class WordManager : MonoBehaviour {
         LetterPurchases += letter.Cost;
         LettersPurchased++;
         letter.Purchased = true;
+        RoundScore -= letter.Cost;
         if (letter.IsVowel()) {
             VowelsPurchased++;
             VowelPurchasedLastRound = true;
@@ -260,6 +267,7 @@ public class WordManager : MonoBehaviour {
             VowelPurchasedLastRound = false;
             IncreaseConsonantCosts();
         }
+        RenderCurrentScore();
     }
 
     private void SetLetterStates() {
@@ -317,5 +325,9 @@ public class WordManager : MonoBehaviour {
                 letter.IncreaseCost(increaseAmount);
             }
         }
+    }
+
+    private void RenderCurrentScore() {
+        _currentScoreText.text = "Score: " + RoundScore;
     }
 }

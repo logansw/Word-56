@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     public int GetFinalScore() {
         int finalScore = 0;
         for (int i = 0; i < ConfigurationManager.s_instance.SeriesLength; i++) {
-            finalScore += WordManager.s_instance.RoundScore;
+            finalScore += ConfigurationManager.s_instance.StartingScore;
             finalScore -= LetterPurchases[i];
             finalScore -= SolvePurchases[i];
         }
