@@ -1464,6 +1464,7 @@ MonoBehaviour:
   _cancelButton: {fileID: 1763496605}
   _deleteButton: {fileID: 273824698}
   _enterButton: {fileID: 1464641910}
+  _undoAllButton: {fileID: 942416416}
 --- !u!114 &303028733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3456,7 +3457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &942416415
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5762,7 +5763,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1763496602
 RectTransform:
   m_ObjectHideFlags: 0
