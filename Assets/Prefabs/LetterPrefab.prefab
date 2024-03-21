@@ -223,10 +223,13 @@ MonoBehaviour:
   Character: 0
   LetterState: 0
   Cost: 0
+  Purchased: 0
   _text: {fileID: 4101141850271931051}
   _costText: {fileID: 5641298373847383496}
   _collider: {fileID: 4101141850780326452}
   _spriteRenderer: {fileID: 4101141850780326455}
+  InitialConsonantCost: 100
+  InitialVowelCost: 300
 --- !u!212 &4101141850780326455
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -432,8 +435,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1.5
-  m_fontSizeBase: 1.5
+  m_fontSize: 2.5
+  m_fontSizeBase: 2.5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

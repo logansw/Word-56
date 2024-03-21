@@ -131,9 +131,9 @@ public class Letter : MonoBehaviour
                 // Inform the player why this letter cannot be pressed
             }
         } else if (StateController.GetCurrentState() == State.StateType.Solve) {
-            if (LetterState.Equals(LetterState.Default) || LetterState.Equals(LetterState.Correct) || LetterState.Equals(LetterState.Disabled)) {
+            if (LetterState.Equals(LetterState.Default) || LetterState.Equals(LetterState.Disabled)) {
                 e_OnLetterClicked?.Invoke(this);
-            } else if (LetterState.Equals(LetterState.Incorrect)) {
+            } else if (LetterState.Equals(LetterState.Incorrect) || LetterState.Equals(LetterState.Correct)) {
                 // Play dull sound
                 // Inform the player why this letter cannot be pressed
             }
@@ -156,6 +156,10 @@ public class Letter : MonoBehaviour
                 break;
         }
         _costText.text = Cost.ToString();
+    }
+
+    public void ColorLetterForSelection() {
+        _spriteRenderer.color = Color.yellow;
     }
 
     public bool IsVowel() {

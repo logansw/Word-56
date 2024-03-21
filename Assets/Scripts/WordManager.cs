@@ -6,6 +6,7 @@ using System.IO;
 using TMPro;
 using System.Text;
 using UnityEngine.UI;
+using UnityEngine.AI;
 
 public class WordManager : MonoBehaviour {
     // Static
@@ -14,8 +15,6 @@ public class WordManager : MonoBehaviour {
     public List<string> SixLetterWords;
     public string WordA;
     public string WordB;
-    public TMP_Text WordAText;
-    public TMP_Text WordBText;
     private bool _initialized;
     public HashSet<Letter> LettersFound;
 
@@ -24,13 +23,10 @@ public class WordManager : MonoBehaviour {
     public bool VowelPurchasedLastRound;
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
-    [SerializeField] private TMP_Text _solveAttemptText;
     [SerializeField] private TMP_Text _solveCostText;
     [SerializeField] private TMP_Text _currentScoreText;
-    private string _solveAttempt;
     public List<Letter> Letters;
     public int RoundScore;
-    private int _solveIndex;
     [SerializeField] private Button _enterButton;
     private DateTime _startTime;
     public int LetterPurchases;
@@ -40,6 +36,8 @@ public class WordManager : MonoBehaviour {
     [SerializeField] private Canvas _intermisisonCanvas;
     public int SolvePurchaseCost;
     private ConfigurationManager _configMan;
+    public List<SolveLetter> SolveLetters = new List<SolveLetter>();
+    public char SelectedLetter;
 
     void Awake() {
         s_instance = this;
@@ -59,10 +57,12 @@ public class WordManager : MonoBehaviour {
 
     void OnEnable() {
         Letter.e_OnLetterClicked += OnLetterClicked;
+        SolveLetter.e_OnLetterClicked += RenderEnterButton;
     }
 
     void OnDisable() {
         Letter.e_OnLetterClicked -= OnLetterClicked;
+        SolveLetter.e_OnLetterClicked -= RenderEnterButton;
     }
 
     public void Initialize() {
@@ -102,10 +102,9 @@ public class WordManager : MonoBehaviour {
     {
         _configMan ??= ConfigurationManager.s_instance;
         LettersFound = new HashSet<Letter>();
-        WordAText.text = "_ _ _ _ _";
-        WordBText.text = "_ _ _ _ _ _";
-        _solveAttempt = "";
-        _solveAttemptText.text = "";
+        foreach (SolveLetter solveLetter in SolveLetters) {
+            solveLetter.Clear();
+        }
         foreach (Letter letter in Letters)
         {
             letter.Reset();
@@ -115,7 +114,6 @@ public class WordManager : MonoBehaviour {
         LetterPurchases = 0;
         TimeElapsed = 0;
         SolvePurchases = 0;
-        _solveIndex = 0;
         _guessCounterText.text = "Guesses: 0";
         SolvePurchaseCost = _configMan.SolveStartCost;
         _solveCostText.text = $"Solve ({SolvePurchaseCost})";
@@ -178,31 +176,41 @@ public class WordManager : MonoBehaviour {
         }
         else if (StateController.GetCurrentState() == State.StateType.Solve)
         {
-            AddLetterToSolveAttempt(letter);
+            RenderLetters();
+            SelectLetter(letter.Character);
+            letter.ColorLetterForSelection();
         }
     }
 
-    private void AddLetterToSolveAttempt(Letter letter)
+    private void SelectLetter(char c)
     {
-        _solveAttempt += letter.Character;
-        _solveIndex++;
-        _solveAttemptText.text = _solveAttempt;
-        _enterButton.interactable = _solveAttempt.Length == 11;
+        SelectedLetter = c;
     }
 
-    public void ClearSolveAttempt()
+    private string GetCurrentGuess()
     {
-        _solveAttemptText.text = "";
-        _solveAttempt = "";
-        _solveIndex = 0;
+        string guess = "";
+        foreach (SolveLetter solveLetter in SolveLetters)
+        {
+            if (solveLetter.Character != '\0')
+            {
+                guess += solveLetter.Character;
+            }
+        }
+        return guess;
     }
 
-    public void DeleteLetterFromSolveAttempt() {
-        if (_solveIndex == 0) { return; }
-        _solveIndex--;
-        _solveAttempt = _solveAttempt.Substring(0, _solveIndex);
-        _solveAttemptText.text = _solveAttempt;
-        _enterButton.interactable = _solveAttempt.Length == 11;
+    public void CancelSolveAttempt()
+    {
+        foreach (SolveLetter solveLetter in SolveLetters)
+        {
+            if (solveLetter.Status == SolveStatus.Guess)
+            {
+                solveLetter.Clear();
+            }
+        }
+        RenderLetters();
+        SelectedLetter = '\0';
     }
 
     public void SubmitSolveAttempt() {
@@ -210,7 +218,8 @@ public class WordManager : MonoBehaviour {
         RoundScore -= SolvePurchaseCost;
         RenderCurrentScore();
         // Check if the solve attempt is correct
-        if (_solveAttempt.Substring(0, 5) == WordA && _solveAttempt.Substring(5, 6) == WordB) {
+        string solveAttempt = GetCurrentGuess();
+        if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
             TimeSpan timeSpan = DateTime.Now - _startTime;
             int seconds = (int)timeSpan.TotalSeconds;
             TimeElapsed = seconds;
@@ -228,9 +237,7 @@ public class WordManager : MonoBehaviour {
                 StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
             }
         } else {
-            _solveAttemptText.text = "";
-            _solveAttempt = "";
-            _solveIndex = 0;
+            CancelSolveAttempt();
             StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
             SolvePurchaseCost += _configMan.InflationRateSolve;
             _solveCostText.text = $"Solve ({SolvePurchaseCost})";
@@ -242,14 +249,14 @@ public class WordManager : MonoBehaviour {
         for (int i = 0; i < WordA.Length; i++) {
             if (WordA[i] == letter.Character) {
                 found = true;
-                RevealLetter(0, i);
+                RevealLetter(letter.Character, i);
             }
         }
 
         for (int i = 0; i < WordB.Length; i++) {
             if (WordB[i] == letter.Character) {
                 found = true;
-                RevealLetter(1, i);
+                RevealLetter(letter.Character, i + WordA.Length);
             }
         }
 
@@ -262,18 +269,8 @@ public class WordManager : MonoBehaviour {
         }
     }
 
-    private void RevealLetter(int wordIndex, int characterIndex) {
-        if (wordIndex == 0) {
-            char c = WordA[characterIndex];
-            StringBuilder sb = new StringBuilder(WordAText.text);
-            sb[characterIndex * 2] = c;
-            WordAText.text = sb.ToString();
-        } else {
-            char c = WordB[characterIndex];
-            StringBuilder sb = new StringBuilder(WordBText.text);
-            sb[characterIndex * 2] = c;
-            WordBText.text = sb.ToString();
-        }
+    private void RevealLetter(char c, int characterIndex) {
+        SolveLetters[characterIndex].SetCorrect(c);
     }
 
     private void PurchaseLetter(Letter letter) {
@@ -316,6 +313,10 @@ public class WordManager : MonoBehaviour {
         foreach (Letter letter in Letters) {
             letter.RenderLetter();
         }
+    }
+
+    public void RenderEnterButton() {
+        _enterButton.interactable = GetCurrentGuess().Length == 11;
     }
 
     private void IncreaseVowelCosts() {

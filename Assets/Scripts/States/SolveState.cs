@@ -18,9 +18,10 @@ public class SolveState : State
     {
         _solveButton.interactable = false;
         _cancelButton.gameObject.SetActive(true);
-        _deleteButton.gameObject.SetActive(true);
+        // _deleteButton.gameObject.SetActive(true);
         _enterButton.gameObject.SetActive(true);
         _undoAllButton.gameObject.SetActive(true);
+        WordManager.s_instance.RenderEnterButton();
     }
     public override void UpdateState(StateController stateController)
     {
@@ -36,5 +37,6 @@ public class SolveState : State
         _deleteButton.gameObject.SetActive(false);
         _enterButton.gameObject.SetActive(false);
         _undoAllButton.gameObject.SetActive(false);
+        WordManager.s_instance.CancelSolveAttempt();
     }
 }
