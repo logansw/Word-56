@@ -8,9 +8,11 @@ public class PreStartState : State
     [SerializeField] private Button _startbutton;
     [SerializeField] private GameObject _screenMain;
 
-    public PreStartState() {
+    public PreStartState()
+    {
         GameState = StateType.PreStart;
     }
+
     public override void OnEnter(StateController stateController)
     {
         _screenMain.SetActive(true);
@@ -26,7 +28,7 @@ public class PreStartState : State
     }
     public override void UpdateState(StateController stateController)
     {
-        // Nothing
+        // Do nothing
     }
     public override void OnExit(StateController stateController)
     {
