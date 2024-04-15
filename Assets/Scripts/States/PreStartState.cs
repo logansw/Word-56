@@ -20,11 +20,7 @@ public class PreStartState : State
         WordManager wordManager = GameObject.Find("WordManager").GetComponent<WordManager>();
         wordManager.Initialize();
         wordManager.Reset();
-        if (ConfigurationManager.s_instance.ChallengeMode) {
-            wordManager.ChooseWords(Random.Range(5, 6));
-        } else {
-            wordManager.ChooseWords(Random.Range(3, 4));
-        }
+        wordManager.ChooseWords();
     }
     public override void UpdateState(StateController stateController)
     {

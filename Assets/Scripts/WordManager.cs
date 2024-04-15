@@ -121,22 +121,10 @@ public class WordManager : MonoBehaviour {
         RoundScore = _configMan.StartingScore;
     }
 
-    public void ChooseWords(int vowelCount)
+    public void ChooseWords()
     {
-        int a; int b = 0;
         string wordA = ChooseRandomWord(FiveLetterWords);
-        string wordB = "";
-        a = CountVowels(wordA);
-        while (a == vowelCount)
-        {
-            wordA = ChooseRandomWord(FiveLetterWords);
-            a = CountVowels(wordA);
-        }
-        while (a + b != vowelCount)
-        {
-            wordB = ChooseRandomWord(SixLetterWords);
-            b = CountVowels(wordB);
-        }
+        string wordB = ChooseRandomWord(SixLetterWords);
         if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6)
         {
             Debug.Log("Invalid word lengths.");
