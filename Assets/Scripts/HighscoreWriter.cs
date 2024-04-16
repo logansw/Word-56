@@ -47,6 +47,10 @@ public class HighscoreWriter : MonoBehaviour
         SceneManager.LoadScene("Title");
     }
 
+    public void SkipHighscore() {
+        SceneManager.LoadScene("Title");
+    }
+
     public void WriteHighscore(int score) {
         if (_nameInputField.text.Length == 0) {
             _nameInputField.text = "Anonymous";
