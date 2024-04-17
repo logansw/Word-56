@@ -29,7 +29,6 @@ public class Letter : MonoBehaviour
 
     public delegate void LetterClicked(Letter letter);
     public static LetterClicked e_OnLetterClicked;
-    public int InitialConsonantCost = 100;
     public int InitialVowelCost = 300;
 
     void Awake() {
@@ -63,7 +62,7 @@ public class Letter : MonoBehaviour
             LetterState = LetterState.Default;
         }
         if (s_consonantCostMap.ContainsKey(Character)) {
-            Cost = InitialConsonantCost;
+            Cost = s_consonantCostMap[Character];
         } else if (IsVowel()){
             Cost = InitialVowelCost;
         }
@@ -85,7 +84,7 @@ public class Letter : MonoBehaviour
             LetterState = LetterState.Default;
         }
         if (s_consonantCostMap.ContainsKey(Character)) {
-            Cost = InitialConsonantCost;
+            Cost = s_consonantCostMap[Character];
         } else if (IsVowel()){
             Cost = InitialVowelCost;
         }
@@ -104,6 +103,7 @@ public class Letter : MonoBehaviour
 
     private void HandleKeypress() {
         if (Input.GetKeyDown(Character.ToString().ToLower())) {
+            // Debug.Log("Click!");
             HandleLetterClicked();
         }
     }

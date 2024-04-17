@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,17 +12,17 @@ public class ConfigurationManager : MonoBehaviour
     // Public
     public bool ChallengeMode;
     public int SeriesLength;
-    public bool ConsecutiveVowelsEnabled;
-    public int StartingScore = 30_000;
-    public int InflationRateOne = 25;
-    public int InflationRateTwo = 50;
-    public int InflationRateThree = 75;
-    public int PeriodOneStart = 3;
-    public int PeriodTwoStart = 9;
-    public int PeriodThreeStart = 15;
-    public int InflationRateVowel = 25;
-    public int InflationRateSolve = 100;
-    public int SolveStartCost = 700;
+    public bool ConsecutiveVowelsAllowed;
+    public int StartingScore;
+    public int InflationRateOne;
+    public int InflationRateTwo;
+    public int InflationRateThree;
+    public int PeriodOneStart;
+    public int PeriodTwoStart;
+    public int PeriodThreeStart;
+    public int InflationRateVowel;
+    public int InflationRateSolve;
+    public int SolveStartCost;
 
     // External References
     [SerializeField] private UnityEngine.UI.Image[] _singleButtons;
@@ -31,6 +32,9 @@ public class ConfigurationManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image[] _challengeButtons;
 
     void Awake() {
+        if (s_instance != null) {
+            Destroy(s_instance.gameObject);
+        }
         s_instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -82,6 +86,73 @@ public class ConfigurationManager : MonoBehaviour
         }
         foreach (UnityEngine.UI.Image button in buttons) {
             button.color = new Color(255/255f, 95/255f, 212/255f, 1f);
+        }
+    }
+
+    public int GetVowelInflationCost()
+    {
+        if (WordManager.s_instance.VowelsPurchased == 0)
+        {
+            return 50;
+        }
+        else if (WordManager.s_instance.VowelsPurchased == 1)
+        {
+            return 75;
+        }
+        else
+        {
+            return 125;
+        }
+    }
+
+    public int GetCommonInflationCost(int commonsPurchased)
+    {
+        if (commonsPurchased == 0)
+        {
+            return 50;
+        }
+        else if (commonsPurchased == 1)
+        {
+            return 75;
+        }
+        else if (commonsPurchased >= 2)
+        {
+            return 125;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public int GetConsonantInflationCost(int lettersPurchased, char letter)
+    {
+        if (lettersPurchased == 6 && WordManager.s_instance.RowTwoLetters.Contains(letter))
+        {
+            return 50;
+        }
+        else if (lettersPurchased == 10)
+        {
+            if (WordManager.s_instance.RowTwoLetters.Contains(letter))
+            {
+                return 50;
+            }
+            else if (WordManager.s_instance.RowThreeLetters.Contains(letter))
+            {
+                return 25;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else if (!ChallengeMode && lettersPurchased == 15)
+        {
+            return 25;
+        }
+        else
+        {
+            return 0;
         }
     }
 }

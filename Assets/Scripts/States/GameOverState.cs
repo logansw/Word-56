@@ -6,7 +6,6 @@ using TMPro;
 
 public class GameOverState : State
 {
-    [SerializeField] private GameObject _screenGameOver;
     [SerializeField] private TMP_Text _finalScoreText;
     [SerializeField] private ScoreBreakdown _scoreBreakdownPrefab;
     [SerializeField] private Canvas _canvas;
@@ -17,7 +16,7 @@ public class GameOverState : State
     }
     public override void OnEnter(StateController stateController)
     {
-        _screenGameOver.SetActive(true);
+        GameManager.s_instance.SetActivePanel(2);
         RenderBreakdowns();
         _finalScoreText.text = "Final Score: " + GameManager.s_instance.GetFinalScore();
     }
@@ -34,7 +33,7 @@ public class GameOverState : State
             int letterPurchases = GameManager.s_instance.LetterPurchases[i];
             int timeElapsed = GameManager.s_instance.TimeElapses[i];
             int solvePurchases = GameManager.s_instance.SolvePurchases[i];
-            scoreBreakdown.Initialize(roundNumber, letterPurchases, timeElapsed, solvePurchases);
+            scoreBreakdown.Initialize(roundNumber, letterPurchases, timeElapsed, solvePurchases, GameManager.s_instance.TimeBonuses[i], GameManager.s_instance.SelectionBonuses[i]);
         }
     }
 
@@ -44,7 +43,7 @@ public class GameOverState : State
     }
     public override void OnExit(StateController stateController)
     {
-        _screenGameOver.SetActive(false);
+        GameManager.s_instance.SetActivePanel(0);
         // If rounds remain, prepare accordingly
     }
 }

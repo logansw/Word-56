@@ -7,6 +7,7 @@ using TMPro;
 using System.Text;
 using UnityEngine.UI;
 using UnityEngine.AI;
+using System.Linq;
 
 public class WordManager : MonoBehaviour {
     // Static
@@ -21,6 +22,11 @@ public class WordManager : MonoBehaviour {
     public int LettersPurchased;
     public int VowelsPurchased;
     public bool VowelPurchasedLastRound;
+    public int CommonsPurchased;
+    public readonly char[] CommonLetters = {'R', 'S', 'T', 'L'};
+    public readonly char[] RowOneLetters = {'R', 'T', 'N', 'S', 'L', 'C', 'D', 'P'};
+    public readonly char[] RowTwoLetters = {'M', 'H', 'G', 'B', 'F', 'Y', 'W'};
+    public readonly char[] RowThreeLetters = {'K', 'V', 'X', 'J', 'Q', 'Z'};
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
     [SerializeField] private TMP_Text _solveCostText;
@@ -32,6 +38,8 @@ public class WordManager : MonoBehaviour {
     public int LetterPurchases;
     public int TimeElapsed;
     public int SolvePurchases;
+    public int SelectionBonus;
+    public int TimeBonus;
     [SerializeField] private ScoreBreakdown _scoreBreakdownPrefab;
     [SerializeField] private Canvas _intermisisonCanvas;
     public int SolvePurchaseCost;
@@ -95,6 +103,8 @@ public class WordManager : MonoBehaviour {
             Debug.Log(e.Message);
         }
 
+        SetLetterStates();
+
         _initialized = true;
     }
 
@@ -111,6 +121,7 @@ public class WordManager : MonoBehaviour {
         }
         LettersPurchased = 0;
         VowelsPurchased = 0;
+        CommonsPurchased = 0;
         LetterPurchases = 0;
         TimeElapsed = 0;
         SolvePurchases = 0;
@@ -119,6 +130,7 @@ public class WordManager : MonoBehaviour {
         _solveCostText.text = $"Solve ({SolvePurchaseCost})";
         _currentScoreText.text = "";
         RoundScore = _configMan.StartingScore;
+        SetLetterStates();
     }
 
     public void ChooseWords()
@@ -160,7 +172,6 @@ public class WordManager : MonoBehaviour {
             HandleGuess(letter);
             _guessCounterText.text = "Guesses: " + LettersPurchased;
             SetLetterStates();
-            RenderLetters();
         }
         else if (StateController.GetCurrentState() == State.StateType.Solve)
         {
@@ -208,28 +219,33 @@ public class WordManager : MonoBehaviour {
         // Check if the solve attempt is correct
         string solveAttempt = GetCurrentGuess();
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
-            TimeSpan timeSpan = DateTime.Now - _startTime;
-            int seconds = (int)timeSpan.TotalSeconds;
-            TimeElapsed = seconds;
-            ScoreBreakdown scoreBreakdown = Instantiate(_scoreBreakdownPrefab, _intermisisonCanvas.transform);
-            scoreBreakdown.transform.localPosition = new Vector3(0, 80, 0);
-            scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimeElapsed, SolvePurchases);
-            if (_configMan.SeriesLength == 1) {
-                GameManager.s_instance.LetterPurchases.Add(LetterPurchases);
-                GameManager.s_instance.TimeElapses.Add(TimeElapsed);
-                GameManager.s_instance.SolvePurchases.Add(SolvePurchases);
-                
-                StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
-                StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);
-            } else {
-                StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
-            }
+            Solve();
         } else {
             CancelSolveAttempt();
             StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
             SolvePurchaseCost += _configMan.InflationRateSolve;
             _solveCostText.text = $"Solve ({SolvePurchaseCost})";
         }
+    }
+
+    private void Solve()
+    {
+        TimeSpan timeSpan = DateTime.Now - _startTime;
+        int seconds = (int)timeSpan.TotalSeconds;
+        TimeElapsed = seconds;
+        TimeBonus = 1000 - (TimeElapsed / 30 * 50);
+        if (TimeElapsed >= 300)
+        {
+            TimeBonus = 0;
+        }
+        if (LettersPurchased <= 14)
+        {
+            SelectionBonus = (int)(50 * Mathf.Pow(2, 14 - LettersPurchased));
+        }
+        ScoreBreakdown scoreBreakdown = Instantiate(_scoreBreakdownPrefab, _intermisisonCanvas.transform);
+        scoreBreakdown.transform.localPosition = new Vector3(0, 80, 0);
+        scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimeElapsed, SolvePurchases, TimeBonus, SelectionBonus);
+        StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
     }
 
     private void HandleGuess(Letter letter) {
@@ -267,29 +283,51 @@ public class WordManager : MonoBehaviour {
         letter.Purchased = true;
         RoundScore -= letter.Cost;
         if (letter.IsVowel()) {
+            IncreaseVowelCosts();
             VowelsPurchased++;
             VowelPurchasedLastRound = true;
-            IncreaseVowelCosts();
         } else {
             VowelPurchasedLastRound = false;
-            IncreaseConsonantCosts();
+            if (CommonLetters.Contains(letter.Character))
+            {
+                IncreaseCommonCosts();
+                CommonsPurchased++;
+            }
+            else
+            {
+                IncreaseConsonantCosts();
+            }
         }
         RenderCurrentScore();
     }
 
     private void SetLetterStates() {
-        foreach (Letter letter in Letters) {
+        foreach (Letter letter in Letters)
+        {
             LetterState state = LetterState.Default;
-            if (letter.Purchased) {
+            char c = letter.Character;
+            if (letter.Purchased)
+            {
                 state = s_instance.LettersFound.Contains(letter) ? LetterState.Correct : LetterState.Incorrect;
-            } else if (letter.IsVowel()) {
-                if (_configMan.ConsecutiveVowelsEnabled && VowelPurchasedLastRound) {
+            }
+            else if (letter.IsVowel())
+            {
+                if (LettersPurchased == 0 || LettersPurchased == 1 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
+                {
+                    state = LetterState.Disabled;
+                }
+            }
+            else
+            {
+                if (LettersPurchased == 0 && RowOneLetters.Contains(c))
+                {
                     state = LetterState.Disabled;
                 }
             }
 
             letter.LetterState = state;
         }
+        RenderLetters();
     }
 
     private void RenderLetters() {
@@ -310,30 +348,25 @@ public class WordManager : MonoBehaviour {
     private void IncreaseVowelCosts() {
         foreach (Letter letter in Letters) {
             if (letter.IsVowel()) {
-                letter.IncreaseCost(_configMan.InflationRateVowel);
+                letter.IncreaseCost(_configMan.GetVowelInflationCost());
+            }
+        }
+    }
+
+    private void IncreaseCommonCosts() {
+        foreach (Letter letter in Letters) {
+            if (CommonLetters.Contains(letter.Character))
+            {
+                letter.IncreaseCost(_configMan.GetCommonInflationCost(CommonsPurchased));
             }
         }
     }
 
     private void IncreaseConsonantCosts() {
-        int increaseAmount;
-        switch (LettersPurchased) {
-            case int i when i >= _configMan.PeriodOneStart && i < _configMan.PeriodTwoStart:
-                increaseAmount = _configMan.InflationRateOne;
-                break;
-            case int i when i >= _configMan.PeriodTwoStart && i < _configMan.PeriodThreeStart:
-                increaseAmount = _configMan.InflationRateTwo;
-                break;
-            case int i when i >= _configMan.PeriodThreeStart:
-                increaseAmount = _configMan.InflationRateThree;
-                break;
-            default:
-                increaseAmount = 0;
-                break;
-        }
         foreach (Letter letter in Letters) {
-            if (!letter.IsVowel()) {
-                letter.IncreaseCost(increaseAmount);
+            if (!letter.IsVowel())
+            {
+                letter.IncreaseCost(_configMan.GetConsonantInflationCost(LettersPurchased, letter.Character));
             }
         }
     }

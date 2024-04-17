@@ -5513,7 +5513,7 @@ MonoBehaviour:
   PeriodThreeStart: 15
   InflationRateVowel: 25
   InflationRateSolve: 100
-  SolveStartCost: 700
+  SolveStartCost: 500
   _singleButtons:
   - {fileID: 1832588717}
   - {fileID: 1206417894}
