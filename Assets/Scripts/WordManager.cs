@@ -172,6 +172,7 @@ public class WordManager : MonoBehaviour {
             HandleGuess(letter);
             _guessCounterText.text = "Guesses: " + LettersPurchased;
             SetLetterStates();
+            ChallengeModeSetCosts();
         }
         else if (StateController.GetCurrentState() == State.StateType.Solve)
         {
@@ -220,11 +221,13 @@ public class WordManager : MonoBehaviour {
         string solveAttempt = GetCurrentGuess();
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
             Solve();
+            AudioManager.s_instance.Victory.Play();
         } else {
             CancelSolveAttempt();
             StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
             SolvePurchaseCost += _configMan.InflationRateSolve;
             _solveCostText.text = $"Solve ({SolvePurchaseCost})";
+            AudioManager.s_instance.Negative.Play();
         }
     }
 
@@ -266,10 +269,9 @@ public class WordManager : MonoBehaviour {
 
         if (found) {
             LettersFound.Add(letter);
-            // Play ding sound
+            AudioManager.s_instance.Positive.Play();
         } else {
-            // Play dull sound
-            // Inform the player why this letter is not in the word
+            AudioManager.s_instance.Click.Play();
         }
     }
 
@@ -373,5 +375,28 @@ public class WordManager : MonoBehaviour {
 
     private void RenderCurrentScore() {
         _currentScoreText.text = "Score: " + RoundScore;
+    }
+
+    private void ChallengeModeSetCosts()
+    {
+        if (!_configMan.ChallengeMode) { return; }
+        if (LettersPurchased == 14)
+        {
+            foreach (Letter letter in Letters)
+            {
+                if (RowOneLetters.Contains(letter.Character) || letter.IsVowel())
+                {
+                    letter.SetCost(1200);
+                }
+                else if (RowTwoLetters.Contains(letter.Character))
+                {
+                    letter.SetCost(800);
+                }
+                else if (RowThreeLetters.Contains(letter.Character))
+                {
+                    letter.SetCost(600);
+                }
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ public class GameOverState : State
         for (int i = 0; i < seriesLength; i++) {
             ScoreBreakdown scoreBreakdown = Instantiate(_scoreBreakdownPrefab, _finishPanel.transform);
             scoreBreakdown.ScaleToWidth(width);
-            scoreBreakdown.transform.localPosition = new Vector3(-(_canvas.pixelRect.width / 2f * 0.9f) + (i * width) + width / 2f, 80, 0);
+            scoreBreakdown.transform.localPosition = new Vector3(-(_canvas.pixelRect.width / 2f * 0.9f) + (i * width) + width / 2f, 200, 0);
             int roundNumber = i + 1;
             int letterPurchases = GameManager.s_instance.LetterPurchases[i];
             int timeElapsed = GameManager.s_instance.TimeElapses[i];

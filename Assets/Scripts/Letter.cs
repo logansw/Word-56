@@ -170,6 +170,12 @@ public class Letter : MonoBehaviour
         Cost += amount;
         RenderLetter();
     }
+
+    public void SetCost(int amount)
+    {
+        Cost = amount;
+        RenderLetter();
+    }
 }
 
 public enum PhonemicType {
