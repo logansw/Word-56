@@ -19,13 +19,6 @@ public class Letter : MonoBehaviour
     // Letter Costs
     private static Dictionary<char, int> s_consonantCostMap = new Dictionary<char, int>();
     private static bool s_dictionaryInitialized;
-    private char[] _setOne = new char[] {'J', 'X', 'Q', 'Z'};
-    private char[] _setTwo = new char[] {'K', 'V', 'W'};
-    private char[] _setThree = new char[] {'Y', 'F', 'H'};
-    private char[] _setFour = new char[] {'P', 'C', 'M', 'B'};
-    private char[] _setFive = new char[] {'D', 'G', 'N'};
-    private char[] _setSix = new char[] {'L', 'R', 'S', 'T'};
-    private char[] _vowels = new char[] {'A', 'E', 'I', 'O', 'U'};
 
     public delegate void LetterClicked(Letter letter);
     public static LetterClicked e_OnLetterClicked;
@@ -33,12 +26,29 @@ public class Letter : MonoBehaviour
 
     void Awake() {
         if (!s_dictionaryInitialized) {
-            RegisterLetterCosts(_setOne, 200);
-            RegisterLetterCosts(_setTwo, 225);
-            RegisterLetterCosts(_setThree, 250);
-            RegisterLetterCosts(_setFour, 275);
-            RegisterLetterCosts(_setFive, 300);
-            RegisterLetterCosts(_setSix, 325);
+            // RegisterLetterCosts(_setOne, 200);
+            // RegisterLetterCosts(_setTwo, 225);
+            // RegisterLetterCosts(_setThree, 250);
+            // RegisterLetterCosts(_setFour, 275);
+            // RegisterLetterCosts(_setFive, 300);
+            // RegisterLetterCosts(_setSix, 500);
+            RegisterLetterCosts(new char[] {'R', 'T', 'S', 'L'}, 500);
+            RegisterLetterCosts(new char[] {'N'}, 275);
+            RegisterLetterCosts(new char[] {'D', 'G'}, 260);
+            RegisterLetterCosts(new char[] {'C', 'P', 'M'}, 250);
+            RegisterLetterCosts(new char[] {'B'}, 230);
+            RegisterLetterCosts(new char[] {'Y'}, 225);
+            RegisterLetterCosts(new char[] {'H'}, 220);
+            RegisterLetterCosts(new char[] {'F'}, 210);
+            RegisterLetterCosts(new char[] {'K', 'W'}, 200);
+            RegisterLetterCosts(new char[] {'V'}, 190);
+            RegisterLetterCosts(new char[] {'X'}, 160);
+            RegisterLetterCosts(new char[] {'Q'}, 150);
+            RegisterLetterCosts(new char[] {'Z'}, 140);
+            RegisterLetterCosts(new char[] {'J'}, 130);
+            RegisterLetterCosts(new char[] {'A', 'E'}, 400);
+            RegisterLetterCosts(new char[] {'I', 'O'}, 350);
+            RegisterLetterCosts(new char[] {'U'}, 300);
             s_dictionaryInitialized = true;
         }
     }

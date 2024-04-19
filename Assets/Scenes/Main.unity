@@ -1726,6 +1726,8 @@ MonoBehaviour:
   LetterPurchases: 
   TimeElapses: 
   SolvePurchases: 
+  SelectionBonuses: 
+  TimeBonuses: 
   _screenMain: {fileID: 1090098132}
   _panels:
   - {fileID: 1090098132}
@@ -1777,7 +1779,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameState: 3
-  _screenGameOver: {fileID: 1949356201}
   _finalScoreText: {fileID: 410593054}
   _scoreBreakdownPrefab: {fileID: 3395157212072221299, guid: 6a7d96500cc72495bbfea71ae15008b5, type: 3}
   _canvas: {fileID: 2008794220}
@@ -1848,7 +1849,6 @@ MonoBehaviour:
   - {fileID: 1657478620}
   _buttonsToEnable:
   - {fileID: 664561111}
-  _finishButton: {fileID: 0}
   _continueButton: {fileID: 74741482}
 --- !u!1 &322164051
 GameObject:
@@ -2331,11 +2331,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.52
+      value: -1.83
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.51
+      value: 1.56
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3193,6 +3193,8 @@ MonoBehaviour:
   LetterPurchases: 0
   TimeElapsed: 0
   SolvePurchases: 0
+  SelectionBonus: 0
+  TimeBonus: 0
   _scoreBreakdownPrefab: {fileID: 3395157212072221299, guid: 6a7d96500cc72495bbfea71ae15008b5, type: 3}
   _intermisisonCanvas: {fileID: 322164055}
   SolvePurchaseCost: 0
@@ -3241,11 +3243,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.8399999
+      value: -4.54
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.56
+      value: 0.51
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3725,7 +3727,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.88
+      value: -4.91
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9467,7 +9469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.92
+      value: -2.85
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9995,7 +9997,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.84
+      value: -3.8699996
       objectReference: {fileID: 0}
     - target: {fileID: 4101141850780326441, guid: 6d35193a700b48a40bb43cc07ffbfb65, type: 3}
       propertyPath: m_LocalPosition.y
