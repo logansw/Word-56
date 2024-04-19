@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class Letter : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Letter : MonoBehaviour
     [SerializeField] private TMP_Text _costText;
     [SerializeField] private BoxCollider2D _collider;
     [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private GameObject _cooldownMask;
+    private bool _onCooldown;
 
     // Letter Costs
     private static Dictionary<char, int> s_consonantCostMap = new Dictionary<char, int>();
@@ -26,12 +29,6 @@ public class Letter : MonoBehaviour
 
     void Awake() {
         if (!s_dictionaryInitialized) {
-            // RegisterLetterCosts(_setOne, 200);
-            // RegisterLetterCosts(_setTwo, 225);
-            // RegisterLetterCosts(_setThree, 250);
-            // RegisterLetterCosts(_setFour, 275);
-            // RegisterLetterCosts(_setFive, 300);
-            // RegisterLetterCosts(_setSix, 500);
             RegisterLetterCosts(new char[] {'R', 'T', 'S', 'L'}, 500);
             RegisterLetterCosts(new char[] {'N'}, 275);
             RegisterLetterCosts(new char[] {'D', 'G'}, 260);
@@ -63,6 +60,16 @@ public class Letter : MonoBehaviour
         Initialize();
     }
 
+    void OnEnable()
+    {
+        e_OnLetterClicked += SetLetterCooldown;
+    }
+
+    void OnDisable()
+    {
+        e_OnLetterClicked -= SetLetterCooldown;
+    }
+
     public void Initialize() {
         WordManager.s_instance.Letters.Add(this);
         _text.text = Character.ToString();
@@ -78,6 +85,7 @@ public class Letter : MonoBehaviour
         }
         _costText.text = Cost.ToString();
         RenderLetter();
+        _onCooldown = false;
     }
 
     public void SetCostsToFaceValue() {
@@ -86,7 +94,13 @@ public class Letter : MonoBehaviour
         }
     }
 
+    private void SetLetterCooldown(Letter letter)
+    {
+        StartCoroutine(Cooldown());
+    }
+
     public void Reset() {
+        _onCooldown = false;
         Purchased = false;
         if (Type == PhonemicType.Vowel) {
             LetterState = LetterState.Disabled;
@@ -103,7 +117,7 @@ public class Letter : MonoBehaviour
     }
 
     void Update() {
-        if (StateController.GetCurrentState() == State.StateType.PreStart || StateController.GetCurrentState() == State.StateType.GameOver) {
+        if (StateController.GetCurrentState() == State.StateType.PreStart || StateController.GetCurrentState() == State.StateType.GameOver || _onCooldown) {
             return;
         }
 
@@ -185,6 +199,23 @@ public class Letter : MonoBehaviour
     {
         Cost = amount;
         RenderLetter();
+    }
+
+    private IEnumerator Cooldown()
+    {
+        if (LetterState != LetterState.Default || StateController.GetCurrentState() != State.StateType.Buy)
+        {
+            yield break;
+        }
+        _onCooldown = true;
+        float t = 0f;
+        while (t < 1.0f)
+        {
+            t += Time.deltaTime;
+            _cooldownMask.transform.localScale = new Vector2(1, Mathf.Lerp(1, 0, t));
+            yield return null;
+        }
+        _onCooldown = false;
     }
 }
 

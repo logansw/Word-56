@@ -22,6 +22,10 @@ public class SolveState : State
         _enterButton.gameObject.SetActive(true);
         _undoAllButton.gameObject.SetActive(true);
         WordManager.s_instance.RenderEnterButton();
+        if (WordManager.s_instance.GetCurrentGuess().Length == 11)
+        {
+            WordManager.s_instance.SubmitSolveAttempt();
+        }
     }
     public override void UpdateState(StateController stateController)
     {

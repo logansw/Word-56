@@ -24,8 +24,8 @@ public class WordManager : MonoBehaviour {
     public bool VowelPurchasedLastRound;
     public int CommonsPurchased;
     public readonly char[] CommonLetters = {'R', 'S', 'T', 'L'};
-    public readonly char[] RowOneLetters = {'R', 'T', 'N', 'S', 'L', 'C', 'D', 'P'};
-    public readonly char[] RowTwoLetters = {'M', 'H', 'G', 'B', 'F', 'Y', 'W'};
+    public readonly char[] RowOneLetters = {'R', 'T', 'N', 'S', 'L', 'G', 'D', 'P'};
+    public readonly char[] RowTwoLetters = {'M', 'H', 'C', 'B', 'F', 'Y', 'W'};
     public readonly char[] RowThreeLetters = {'K', 'V', 'X', 'J', 'Q', 'Z'};
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
@@ -187,7 +187,7 @@ public class WordManager : MonoBehaviour {
         SelectedLetter = c;
     }
 
-    private string GetCurrentGuess()
+    public string GetCurrentGuess()
     {
         string guess = "";
         foreach (SolveLetter solveLetter in SolveLetters)
@@ -221,7 +221,6 @@ public class WordManager : MonoBehaviour {
         string solveAttempt = GetCurrentGuess();
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
             Solve();
-            AudioManager.s_instance.Victory.Play();
         } else {
             CancelSolveAttempt();
             StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
@@ -249,6 +248,7 @@ public class WordManager : MonoBehaviour {
         scoreBreakdown.transform.localPosition = new Vector3(0, 80, 0);
         scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimeElapsed, SolvePurchases, TimeBonus, SelectionBonus);
         StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
+        AudioManager.s_instance.Victory.Play();
     }
 
     private void HandleGuess(Letter letter) {
