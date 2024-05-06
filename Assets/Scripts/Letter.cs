@@ -203,7 +203,7 @@ public class Letter : MonoBehaviour
 
     private IEnumerator Cooldown()
     {
-        if (LetterState != LetterState.Default || StateController.GetCurrentState() != State.StateType.Buy)
+        if (StateController.GetCurrentState() != State.StateType.Buy)
         {
             yield break;
         }

@@ -65,12 +65,10 @@ public class WordManager : MonoBehaviour {
 
     void OnEnable() {
         Letter.e_OnLetterClicked += OnLetterClicked;
-        SolveLetter.e_OnLetterClicked += RenderEnterButton;
     }
 
     void OnDisable() {
         Letter.e_OnLetterClicked -= OnLetterClicked;
-        SolveLetter.e_OnLetterClicked -= RenderEnterButton;
     }
 
     public void Initialize() {
@@ -211,6 +209,7 @@ public class WordManager : MonoBehaviour {
         }
         RenderLetters();
         SelectedLetter = '\0';
+
     }
 
     public void SubmitSolveAttempt() {
@@ -223,7 +222,6 @@ public class WordManager : MonoBehaviour {
             Solve();
         } else {
             CancelSolveAttempt();
-            StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
             SolvePurchaseCost += _configMan.InflationRateSolve;
             _solveCostText.text = $"Solve ({SolvePurchaseCost})";
             AudioManager.s_instance.Negative.Play();

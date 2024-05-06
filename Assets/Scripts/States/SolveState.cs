@@ -26,13 +26,11 @@ public class SolveState : State
         {
             WordManager.s_instance.SubmitSolveAttempt();
         }
+        Camera.main.backgroundColor = new Color(0.6f, 0.8812134f, 0.9058824f);
     }
     public override void UpdateState(StateController stateController)
     {
-        // On cancel button pressed
-        // On submit button pressed
-            // Return if wrong
-            // GameOver if correct
+        WordManager.s_instance.RenderEnterButton();
     }
     public override void OnExit(StateController stateController)
     {
@@ -42,5 +40,6 @@ public class SolveState : State
         _enterButton.gameObject.SetActive(false);
         _undoAllButton.gameObject.SetActive(false);
         WordManager.s_instance.CancelSolveAttempt();
+        Camera.main.backgroundColor = new Color(0.9058824f, 0.7215686f, 0.6f);
     }
 }
