@@ -61,11 +61,13 @@ public class Letter : MonoBehaviour
     void OnEnable()
     {
         e_OnLetterClicked += SetLetterCooldown;
+        e_OnLetterClicked += CheckGameStart;
     }
 
     void OnDisable()
     {
         e_OnLetterClicked -= SetLetterCooldown;
+        e_OnLetterClicked -= CheckGameStart;
     }
 
     public void Initialize() {
@@ -85,6 +87,15 @@ public class Letter : MonoBehaviour
         StartCoroutine(Cooldown());
     }
 
+    private void CheckGameStart(Letter letter)
+    {
+        if (StateController.GetCurrentState() == State.StateType.PreStart)
+        {
+            WordManager.s_instance.StartRound();
+            Timer.s_instance.StartTimer();
+        }
+    }
+
     public void Reset() {
         _onCooldown = false;
         Purchased = false;
@@ -97,7 +108,7 @@ public class Letter : MonoBehaviour
     }
 
     void Update() {
-        if (StateController.GetCurrentState() == State.StateType.PreStart || StateController.GetCurrentState() == State.StateType.GameOver || _onCooldown) {
+        if (StateController.GetCurrentState() == State.StateType.GameOver || _onCooldown) {
             return;
         }
 
@@ -107,7 +118,6 @@ public class Letter : MonoBehaviour
 
     private void HandleKeypress() {
         if (Input.GetKeyDown(Character.ToString().ToLower())) {
-            // Debug.Log("Click!");
             HandleLetterClicked();
         }
     }
@@ -124,7 +134,9 @@ public class Letter : MonoBehaviour
     }
 
     private void HandleLetterClicked() {
-        if (StateController.GetCurrentState() == State.StateType.Buy) {
+        if (StateController.GetCurrentState() == State.StateType.PreStart) {
+            e_OnLetterClicked?.Invoke(this);
+        } else if (StateController.GetCurrentState() == State.StateType.Buy) {
             if (LetterState.Equals(LetterState.Default)) {
                 e_OnLetterClicked?.Invoke(this);
             } else if (LetterState.Equals(LetterState.Disabled)) {

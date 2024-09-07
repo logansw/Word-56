@@ -24,6 +24,8 @@ public class State : MonoBehaviour
         Buy,
         Solve,
         GameOver,
-        Intermission
+        Intermission,
+        Defeat,
+        Victory
     }
 }

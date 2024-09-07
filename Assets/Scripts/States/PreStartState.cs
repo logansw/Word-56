@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class PreStartState : State
 {
-    [SerializeField] private Button _startbutton;
     [SerializeField] private GameObject _screenMain;
 
     public PreStartState()
@@ -16,7 +15,6 @@ public class PreStartState : State
     public override void OnEnter(StateController stateController)
     {
         _screenMain.SetActive(true);
-        _startbutton.interactable = true;
         WordManager wordManager = GameObject.Find("WordManager").GetComponent<WordManager>();
         wordManager.Initialize();
         wordManager.Reset();
@@ -28,6 +26,6 @@ public class PreStartState : State
     }
     public override void OnExit(StateController stateController)
     {
-        _startbutton.interactable = false;
+        // Do nothing
     }
 }

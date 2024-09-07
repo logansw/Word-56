@@ -29,10 +29,7 @@ public class WordManager : MonoBehaviour {
     public readonly char[] RowThreeLetters = {'K', 'V', 'X', 'J', 'Q', 'Z'};
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
-    [SerializeField] private TMP_Text _solveCostText;
-    [SerializeField] private TMP_Text _currentScoreText;
     public List<Letter> Letters;
-    public int RoundScore;
     [SerializeField] private Button _enterButton;
     private DateTime _startTime;
     public int LetterPurchases;
@@ -58,7 +55,6 @@ public class WordManager : MonoBehaviour {
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         _guessCounterText.text = "Guesses: 0";
         _startTime = DateTime.Now;
-        RenderCurrentScore();
     }
 
     void OnEnable() {
@@ -122,8 +118,6 @@ public class WordManager : MonoBehaviour {
         TimeElapsed = 0;
         SolvePurchases = 0;
         _guessCounterText.text = "Guesses: 0";
-        _solveCostText.text = $"Solve ({SolvePurchaseCost})";
-        _currentScoreText.text = "";
         SetLetterStates();
     }
 
@@ -209,15 +203,12 @@ public class WordManager : MonoBehaviour {
 
     public void SubmitSolveAttempt() {
         SolvePurchases += SolvePurchaseCost;
-        RoundScore -= SolvePurchaseCost;
-        RenderCurrentScore();
         // Check if the solve attempt is correct
         string solveAttempt = GetCurrentGuess();
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
             Solve();
         } else {
             CancelSolveAttempt();
-            _solveCostText.text = $"Solve ({SolvePurchaseCost})";
             AudioManager.s_instance.Negative.Play();
         }
     }
@@ -281,7 +272,6 @@ public class WordManager : MonoBehaviour {
                 CommonsPurchased++;
             }
         }
-        RenderCurrentScore();
     }
 
     private void SetLetterStates() {
@@ -321,9 +311,5 @@ public class WordManager : MonoBehaviour {
 
     public void RenderEnterButton() {
         _enterButton.interactable = GetCurrentGuess().Length == 11;
-    }
-
-    private void RenderCurrentScore() {
-        _currentScoreText.text = "Score: " + RoundScore;
     }
 }
