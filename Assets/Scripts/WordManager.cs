@@ -40,7 +40,6 @@ public class WordManager : MonoBehaviour {
     public int SolvePurchases;
     public int SelectionBonus;
     public int TimeBonus;
-    [SerializeField] private ScoreBreakdown _scoreBreakdownPrefab;
     [SerializeField] private Canvas _intermisisonCanvas;
     public int SolvePurchaseCost;
     private ConfigurationManager _configMan;
@@ -58,7 +57,6 @@ public class WordManager : MonoBehaviour {
     public void StartRound() {
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         _guessCounterText.text = "Guesses: 0";
-        RoundScore = _configMan.StartingScore;
         _startTime = DateTime.Now;
         RenderCurrentScore();
     }
@@ -124,10 +122,8 @@ public class WordManager : MonoBehaviour {
         TimeElapsed = 0;
         SolvePurchases = 0;
         _guessCounterText.text = "Guesses: 0";
-        SolvePurchaseCost = _configMan.SolveStartCost;
         _solveCostText.text = $"Solve ({SolvePurchaseCost})";
         _currentScoreText.text = "";
-        RoundScore = _configMan.StartingScore;
         SetLetterStates();
     }
 
@@ -170,7 +166,6 @@ public class WordManager : MonoBehaviour {
             HandleGuess(letter);
             _guessCounterText.text = "Guesses: " + LettersPurchased;
             SetLetterStates();
-            ChallengeModeSetCosts();
         }
         else if (StateController.GetCurrentState() == State.StateType.Solve)
         {
@@ -222,7 +217,6 @@ public class WordManager : MonoBehaviour {
             Solve();
         } else {
             CancelSolveAttempt();
-            SolvePurchaseCost += _configMan.InflationRateSolve;
             _solveCostText.text = $"Solve ({SolvePurchaseCost})";
             AudioManager.s_instance.Negative.Play();
         }
@@ -242,9 +236,6 @@ public class WordManager : MonoBehaviour {
         {
             SelectionBonus = (int)(50 * Mathf.Pow(2, 14 - LettersPurchased));
         }
-        ScoreBreakdown scoreBreakdown = Instantiate(_scoreBreakdownPrefab, _intermisisonCanvas.transform);
-        scoreBreakdown.transform.localPosition = new Vector3(0, 80, 0);
-        scoreBreakdown.Initialize(GameManager.s_instance.CurrentRound, LetterPurchases, TimeElapsed, SolvePurchases, TimeBonus, SelectionBonus);
         StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
         AudioManager.s_instance.Victory.Play();
     }
@@ -278,24 +269,16 @@ public class WordManager : MonoBehaviour {
     }
 
     private void PurchaseLetter(Letter letter) {
-        LetterPurchases += letter.Cost;
         LettersPurchased++;
         letter.Purchased = true;
-        RoundScore -= letter.Cost;
         if (letter.IsVowel()) {
-            IncreaseVowelCosts();
             VowelsPurchased++;
             VowelPurchasedLastRound = true;
         } else {
             VowelPurchasedLastRound = false;
             if (CommonLetters.Contains(letter.Character))
             {
-                IncreaseCommonCosts();
                 CommonsPurchased++;
-            }
-            else
-            {
-                IncreaseConsonantCosts();
             }
         }
         RenderCurrentScore();
@@ -331,11 +314,6 @@ public class WordManager : MonoBehaviour {
     }
 
     private void RenderLetters() {
-        if (LettersPurchased == 1 || LettersPurchased == 2) {
-            foreach (Letter letter in Letters) {
-                letter.SetCostsToFaceValue();
-            }
-        }
         foreach (Letter letter in Letters) {
             letter.RenderLetter();
         }
@@ -345,56 +323,7 @@ public class WordManager : MonoBehaviour {
         _enterButton.interactable = GetCurrentGuess().Length == 11;
     }
 
-    private void IncreaseVowelCosts() {
-        foreach (Letter letter in Letters) {
-            if (letter.IsVowel()) {
-                letter.IncreaseCost(_configMan.GetVowelInflationCost());
-            }
-        }
-    }
-
-    private void IncreaseCommonCosts() {
-        foreach (Letter letter in Letters) {
-            if (CommonLetters.Contains(letter.Character))
-            {
-                letter.IncreaseCost(_configMan.GetCommonInflationCost(CommonsPurchased));
-            }
-        }
-    }
-
-    private void IncreaseConsonantCosts() {
-        foreach (Letter letter in Letters) {
-            if (!letter.IsVowel())
-            {
-                letter.IncreaseCost(_configMan.GetConsonantInflationCost(LettersPurchased, letter.Character));
-            }
-        }
-    }
-
     private void RenderCurrentScore() {
         _currentScoreText.text = "Score: " + RoundScore;
-    }
-
-    private void ChallengeModeSetCosts()
-    {
-        if (!_configMan.ChallengeMode) { return; }
-        if (LettersPurchased == 14)
-        {
-            foreach (Letter letter in Letters)
-            {
-                if (RowOneLetters.Contains(letter.Character) || letter.IsVowel())
-                {
-                    letter.SetCost(1200);
-                }
-                else if (RowTwoLetters.Contains(letter.Character))
-                {
-                    letter.SetCost(800);
-                }
-                else if (RowThreeLetters.Contains(letter.Character))
-                {
-                    letter.SetCost(600);
-                }
-            }
-        }
     }
 }

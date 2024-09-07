@@ -14,15 +14,16 @@ public class HighscoreWriter : MonoBehaviour
     public void CheckOnLeaderboard() {
         bool regular = !ConfigurationManager.s_instance.ChallengeMode;
         int seriesLength = ConfigurationManager.s_instance.SeriesLength;
-        if (OnLeaderboard(GameManager.s_instance.GetFinalScore(), regular, seriesLength)) {
-            _finishPanel.SetActive(false);
-            _addHighscorePanel.SetActive(true);
-            if (PlayerPrefs.HasKey("PreviousName")) {
-                _nameInputField.text = PlayerPrefs.GetString("PreviousName");
-            }
-        } else {
-            SceneManager.LoadScene("Title");
-        }
+        // if (OnLeaderboard(GameManager.s_instance.GetFinalScore(), regular, seriesLength)) {
+        //     _finishPanel.SetActive(false);
+        //     _addHighscorePanel.SetActive(true);
+        //     if (PlayerPrefs.HasKey("PreviousName")) {
+        //         _nameInputField.text = PlayerPrefs.GetString("PreviousName");
+        //     }
+        // } else {
+        //     SceneManager.LoadScene("Title");
+        // }
+        SceneManager.LoadScene("Title");
     }
 
     public bool OnLeaderboard(int newScore, bool regular, int seriesLength) {
@@ -43,7 +44,7 @@ public class HighscoreWriter : MonoBehaviour
     }
 
     public void SaveHighscore() {
-        WriteHighscore(GameManager.s_instance.GetFinalScore());
+        // TODO: Write outcome here
         SceneManager.LoadScene("Title");
     }
 

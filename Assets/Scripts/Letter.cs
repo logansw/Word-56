@@ -10,10 +10,8 @@ public class Letter : MonoBehaviour
     public char Character;
     public PhonemicType Type => (Character == 'A' || Character == 'E' || Character == 'I' || Character == 'O' || Character == 'U') ? PhonemicType.Vowel : PhonemicType.Consonant;
     public LetterState LetterState;
-    public int Cost;
     public bool Purchased;
     [SerializeField] private TMP_Text _text;
-    [SerializeField] private TMP_Text _costText;
     [SerializeField] private BoxCollider2D _collider;
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private GameObject _cooldownMask;
@@ -78,20 +76,8 @@ public class Letter : MonoBehaviour
         } else {
             LetterState = LetterState.Default;
         }
-        if (s_consonantCostMap.ContainsKey(Character)) {
-            Cost = s_consonantCostMap[Character];
-        } else if (IsVowel()){
-            Cost = InitialVowelCost;
-        }
-        _costText.text = Cost.ToString();
         RenderLetter();
         _onCooldown = false;
-    }
-
-    public void SetCostsToFaceValue() {
-        if (s_consonantCostMap.ContainsKey(Character)) {
-            Cost = s_consonantCostMap[Character];
-        }
     }
 
     private void SetLetterCooldown(Letter letter)
@@ -107,12 +93,6 @@ public class Letter : MonoBehaviour
         } else {
             LetterState = LetterState.Default;
         }
-        if (s_consonantCostMap.ContainsKey(Character)) {
-            Cost = s_consonantCostMap[Character];
-        } else if (IsVowel()){
-            Cost = InitialVowelCost;
-        }
-        _costText.text = Cost.ToString();
         RenderLetter();
     }
 
@@ -179,7 +159,6 @@ public class Letter : MonoBehaviour
                 _spriteRenderer.color = Color.black;
                 break;
         }
-        _costText.text = Cost.ToString();
     }
 
     public void ColorLetterForSelection() {
@@ -188,17 +167,6 @@ public class Letter : MonoBehaviour
 
     public bool IsVowel() {
         return Character == 'A' || Character == 'E' || Character == 'I' || Character == 'O' || Character == 'U';
-    }
-
-    public void IncreaseCost(int amount) {
-        Cost += amount;
-        RenderLetter();
-    }
-
-    public void SetCost(int amount)
-    {
-        Cost = amount;
-        RenderLetter();
     }
 
     private IEnumerator Cooldown()

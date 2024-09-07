@@ -37,9 +37,6 @@ public class IntermissionState : State
     }
     public override void OnExit(StateController stateController)
     {
-        ScoreBreakdown scoreBreakdown = FindObjectOfType<ScoreBreakdown>();
-        if (scoreBreakdown != null)
-            Destroy(scoreBreakdown.gameObject);
         _screenIntermission.SetActive(false);
         foreach (Button button in _buttonsToDisable) {
             button.gameObject.SetActive(true);
