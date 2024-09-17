@@ -23,12 +23,10 @@ public class WordManager : MonoBehaviour {
     public int VowelsPurchased;
     public bool VowelPurchasedLastRound;
     public int CommonsPurchased;
-    public readonly char[] CommonLetters = {'R', 'S', 'T', 'L'};
-    public readonly char[] RowOneLetters = {'R', 'T', 'N', 'S', 'L', 'G', 'D', 'P'};
-    public readonly char[] RowTwoLetters = {'M', 'H', 'C', 'B', 'F', 'Y', 'W'};
-    public readonly char[] RowThreeLetters = {'K', 'V', 'X', 'J', 'Q', 'Z'};
+
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
+    [SerializeField] private TMP_Text _solveCounterText;
     public List<Letter> Letters;
     [SerializeField] private Button _enterButton;
     private DateTime _startTime;
@@ -53,7 +51,8 @@ public class WordManager : MonoBehaviour {
 
     public void StartRound() {
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
-        _guessCounterText.text = "Guesses: 0";
+        _guessCounterText.text = "Guesses Left: 13";
+        _solveCounterText.text = "Solves Left: 2";
         _startTime = DateTime.Now;
     }
 
@@ -117,7 +116,8 @@ public class WordManager : MonoBehaviour {
         LetterPurchases = 0;
         TimeElapsed = 0;
         SolvePurchases = 0;
-        _guessCounterText.text = "Guesses: 0";
+        _guessCounterText.text = "Guesses Left: 13";
+        _solveCounterText.text = "Solves Left: 2";
         SetLetterStates();
     }
 
@@ -158,7 +158,7 @@ public class WordManager : MonoBehaviour {
         {
             PurchaseLetter(letter);
             HandleGuess(letter);
-            _guessCounterText.text = "Guesses: " + LettersPurchased;
+            _guessCounterText.text = "Guesses: " + (13 - LettersPurchased);
             SetLetterStates();
         }
         else if (StateController.GetCurrentState() == State.StateType.Solve)
@@ -202,7 +202,7 @@ public class WordManager : MonoBehaviour {
     }
 
     public void SubmitSolveAttempt() {
-        SolvePurchases += SolvePurchaseCost;
+        SolvePurchases++;
         // Check if the solve attempt is correct
         string solveAttempt = GetCurrentGuess();
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
@@ -210,7 +210,12 @@ public class WordManager : MonoBehaviour {
         } else {
             CancelSolveAttempt();
             AudioManager.s_instance.Negative.Play();
+            if (SolvePurchases >= 2)
+            {
+                StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
+            }
         }
+        _solveCounterText.text = "Solves: " + (2 - SolvePurchases);
     }
 
     private void Solve()
@@ -267,10 +272,6 @@ public class WordManager : MonoBehaviour {
             VowelPurchasedLastRound = true;
         } else {
             VowelPurchasedLastRound = false;
-            if (CommonLetters.Contains(letter.Character))
-            {
-                CommonsPurchased++;
-            }
         }
     }
 
@@ -290,16 +291,22 @@ public class WordManager : MonoBehaviour {
                     state = LetterState.Disabled;
                 }
             }
-            else
-            {
-                if (LettersPurchased == 0 && RowOneLetters.Contains(c))
-                {
-                    state = LetterState.Disabled;
-                }
-            }
 
             letter.LetterState = state;
         }
+
+        if (LettersPurchased >= 13)
+        {
+            foreach (Letter letter in Letters)
+            {
+                if (!letter.Purchased)
+                {
+                    letter.LetterState = LetterState.Disabled;
+                }
+            }
+            RenderLetters();
+        }
+
         RenderLetters();
     }
 

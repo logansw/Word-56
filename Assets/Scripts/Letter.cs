@@ -23,36 +23,6 @@ public class Letter : MonoBehaviour
 
     public delegate void LetterClicked(Letter letter);
     public static LetterClicked e_OnLetterClicked;
-    public int InitialVowelCost = 300;
-
-    void Awake() {
-        if (!s_dictionaryInitialized) {
-            RegisterLetterCosts(new char[] {'R', 'T', 'S', 'L'}, 500);
-            RegisterLetterCosts(new char[] {'N'}, 275);
-            RegisterLetterCosts(new char[] {'D', 'G'}, 260);
-            RegisterLetterCosts(new char[] {'C', 'P', 'M'}, 250);
-            RegisterLetterCosts(new char[] {'B'}, 230);
-            RegisterLetterCosts(new char[] {'Y'}, 225);
-            RegisterLetterCosts(new char[] {'H'}, 220);
-            RegisterLetterCosts(new char[] {'F'}, 210);
-            RegisterLetterCosts(new char[] {'K', 'W'}, 200);
-            RegisterLetterCosts(new char[] {'V'}, 190);
-            RegisterLetterCosts(new char[] {'X'}, 160);
-            RegisterLetterCosts(new char[] {'Q'}, 150);
-            RegisterLetterCosts(new char[] {'Z'}, 140);
-            RegisterLetterCosts(new char[] {'J'}, 130);
-            RegisterLetterCosts(new char[] {'A', 'E'}, 400);
-            RegisterLetterCosts(new char[] {'I', 'O'}, 350);
-            RegisterLetterCosts(new char[] {'U'}, 300);
-            s_dictionaryInitialized = true;
-        }
-    }
-
-    private void RegisterLetterCosts(char[] set, int cost) {
-        foreach (char c in set) {
-            s_consonantCostMap.Add(c, cost);
-        }
-    }
 
     void Start() {
         Initialize();

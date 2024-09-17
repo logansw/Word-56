@@ -50,7 +50,6 @@ public class Timer : MonoBehaviour
             {
                 _text.text = "00:00";
                 StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
-                StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
                 yield break;
             }
         }
