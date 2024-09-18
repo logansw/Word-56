@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - testflight
+  workflow_dispatch:
 
 jobs:
   buildForiOSPlatform:
