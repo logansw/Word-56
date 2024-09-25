@@ -18,7 +18,6 @@ public class StateController : MonoBehaviour
     public BuyState BuyState;
     public SolveState SolveState;
     public GameOverState GameOverState;
-    public IntermissionState IntermissionState;
     public DefeatState DefeatState;
     public VictoryState VictoryState;
     private State _previousState;

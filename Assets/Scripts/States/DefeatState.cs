@@ -11,7 +11,7 @@ public class DefeatState : State
 
     public override void OnEnter(StateController stateController)
     {
-        GameManager.s_instance.SetActivePanel(3);
+        GameManager.s_instance.SetActivePanel(2);
     }
 
     public override void UpdateState(StateController stateController)
