@@ -44,5 +44,10 @@ public class HighscoreData : IJSONData<HighscoreData>
         {
             return $"{Name} - {CleanWins} - {RetryWins} - {CleanLosses} - {RetryLosses} - {TotalScore} - {TotalGames} - {AverageScore}";
         }
+
+        public int CompareTo(Entry other)
+        {
+            return AverageScore.CompareTo(other.AverageScore);
+        }
     }
 }
