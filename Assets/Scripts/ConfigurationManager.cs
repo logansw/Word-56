@@ -10,8 +10,6 @@ public class ConfigurationManager : MonoBehaviour
     public static ConfigurationManager s_instance;
 
     // Public
-    public bool ChallengeMode;
-    public int SeriesLength;
     public bool ConsecutiveVowelsAllowed;
 
     // External References
@@ -27,55 +25,5 @@ public class ConfigurationManager : MonoBehaviour
         }
         s_instance = this;
         DontDestroyOnLoad(gameObject);
-    }
-
-    void Start() {
-        ChallengeMode = false;
-        SeriesLength = 1;
-    }
-
-    public void SetChallengeMode(bool enabled) {
-        ChallengeMode = enabled;
-        foreach (UnityEngine.UI.Image button in _regularButtons) {
-            button.color = Color.white;
-        }
-        foreach (UnityEngine.UI.Image button in _challengeButtons) {
-            button.color = Color.white;
-        }
-        UnityEngine.UI.Image[] buttons = enabled ? _challengeButtons : _regularButtons;
-        foreach (UnityEngine.UI.Image button in buttons) {
-            button.color = new Color(255/255f, 95/255f, 212/255f, 1f);
-        }
-    }
-
-    public void SetSeriesLength(int numberOfRounds) {
-        SeriesLength = numberOfRounds;
-        foreach (UnityEngine.UI.Image button in _singleButtons) {
-            button.color = Color.white;
-        }
-        foreach (UnityEngine.UI.Image button in _tripleButtons) {
-            button.color = Color.white;
-        }
-        foreach (UnityEngine.UI.Image button in _pentaButtons) {
-            button.color = Color.white;
-        }
-        UnityEngine.UI.Image[] buttons;
-        switch (numberOfRounds) {
-            case 1:
-                buttons = _singleButtons;
-                break;
-            case 3:
-                buttons = _tripleButtons;
-                break;
-            case 5:
-                buttons = _pentaButtons;
-                break;
-            default:
-                buttons = _singleButtons;
-                break;
-        }
-        foreach (UnityEngine.UI.Image button in buttons) {
-            button.color = new Color(255/255f, 95/255f, 212/255f, 1f);
-        }
     }
 }

@@ -58,6 +58,7 @@ public class WordManager : MonoBehaviour {
     public List<SolveLetter> SolveLetters = new List<SolveLetter>();
     public char SelectedLetter;
     public bool IsSecondChance;
+    public bool Victory;
 
     void Awake() {
         s_instance = this;
@@ -134,6 +135,7 @@ public class WordManager : MonoBehaviour {
         LettersRemaining = 13;
         SolvesRemaining = 2;
         SetLetterStates();
+        Victory = false;
     }
 
     public void ChooseWords()
@@ -233,6 +235,7 @@ public class WordManager : MonoBehaviour {
 
     private void Solve()
     {
+        Victory = true;
         StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);
         AudioManager.s_instance.Victory.Play();
     }

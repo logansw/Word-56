@@ -35,6 +35,14 @@ public class HighscoreData : IJSONData<HighscoreData>
             RetryWins = retryWins;
             CleanLosses = cleanLosses;
             RetryLosses = retryLosses;
+            TotalScore = 0;
+            TotalGames = 0;
+            AverageScore = 0;
+            CalculateStats();
+        }
+
+        public void CalculateStats()
+        {
             TotalGames = CleanWins + RetryWins + CleanLosses + RetryLosses;
             TotalScore = CleanWins * 10f + RetryWins * 4f + CleanLosses * 1.5f + RetryLosses * 0f;
             AverageScore = (float)Math.Round(TotalScore / TotalGames, 3);

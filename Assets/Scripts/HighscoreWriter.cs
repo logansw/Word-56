@@ -15,36 +15,15 @@ public class HighscoreWriter : MonoBehaviour
     // TODO: Change so that it always requires you to record the score, but still asks for your name
     public void CheckOnLeaderboard()
     {
-        bool regular = !ConfigurationManager.s_instance.ChallengeMode;
-        int seriesLength = ConfigurationManager.s_instance.SeriesLength;
-        // if (OnLeaderboard(GameManager.s_instance.GetFinalScore(), regular, seriesLength))
-        // {
-        //     _finishPanel.SetActive(false);
-        //     _addHighscorePanel.SetActive(true);
-        //     if (PlayerPrefs.HasKey("PreviousName"))
-        // {
-    //         _nameInputField.text = PlayerPrefs.GetString("PreviousName");
-    //     }
-        // }
-        // else
-        // {
-        //     SceneManager.LoadScene("Title");
-        // }
-        SceneManager.LoadScene("Title");
+        _finishPanel.SetActive(false);
+        _addHighscorePanel.SetActive(true);
+        if (PlayerPrefs.HasKey("PreviousName"))
+        {
+            _nameInputField.text = PlayerPrefs.GetString("PreviousName");
+        }
     }
 
     public void SaveHighscore()
-    {
-        // TODO: Write outcome here
-        SceneManager.LoadScene("Title");
-    }
-
-    public void SkipHighscore()
-    {
-        SceneManager.LoadScene("Title");
-    }
-
-    public void WriteHighscore(int score)
     {
         if (_nameInputField.text.Length == 0)
         {
@@ -67,12 +46,35 @@ public class HighscoreWriter : MonoBehaviour
             }
         }
 
-        // TODO: 9.26.2024 - Update based on outcome
+        if (WordManager.s_instance.Victory)
+        {
+            if (WordManager.s_instance.IsSecondChance)
+            {
+                targetEntry.RetryWins = targetEntry.RetryWins + 1;
+            }
+            else
+            {
+                targetEntry.CleanWins = targetEntry.CleanWins + 1;
+            }
+        }
+        else 
+        {
+            if (WordManager.s_instance.IsSecondChance)
+            {
+                targetEntry.RetryLosses = targetEntry.RetryLosses + 1;
+            }
+            else
+            {
+                targetEntry.CleanLosses = targetEntry.CleanLosses + 1;
+            }
+        }
+        targetEntry.CalculateStats();
         highscoreData.Highscores.Add(targetEntry);
         highscoreData.Highscores = SortAndTruncateHighscores(highscoreData.Highscores);
 
         string path = daily ? "_dailyScores.json" : "_endlessScores.json";
         JSONTool.WriteData<HighscoreData>(highscoreData, path);
+        SceneManager.LoadScene("Title");
     }
 
     private List<HighscoreData.Entry> SortAndTruncateHighscores(List<HighscoreData.Entry> highscores)
