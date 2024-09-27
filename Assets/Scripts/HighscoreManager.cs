@@ -37,7 +37,7 @@ public class HighscoreManager : MonoBehaviour
     public void DisplayScores(int page)
     {
         int startIndex = page * 10 + 1;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (i + startIndex - 1 >= _currentDataOpen.Highscores.Count)
             {
@@ -46,7 +46,7 @@ public class HighscoreManager : MonoBehaviour
             else
             {
                 _entryUIs[i].gameObject.SetActive(true);
-                _entryUIs[i].SetEntry(_currentDataOpen.Highscores[i + startIndex - 1], i + startIndex);
+                _entryUIs[i].SetEntry(_currentDataOpen.Highscores[i + startIndex - 1]);
                 if (startIndex + i == 1)
                 {
                     _entryUIs[i].SetColor(new Color(255f/255f, 229f/255f, 0f/255f, 1f));
