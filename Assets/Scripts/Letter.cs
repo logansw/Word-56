@@ -153,7 +153,7 @@ public class Letter : MonoBehaviour
 
     private IEnumerator Cooldown()
     {
-        if (StateController.GetCurrentState() != State.StateType.Buy)
+        if (StateController.GetCurrentState() != State.StateType.Buy && StateController.GetCurrentState() != State.StateType.PreStart)
         {
             yield break;
         }
