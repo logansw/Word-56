@@ -336,6 +336,6 @@ public class WordManager : MonoBehaviour {
         GameManager.s_instance.SetActivePanel(0);
         LettersRemaining += 2;
         SolvesRemaining += 1;
-        Timer.s_instance.StartTimer(40);
+        Timer.s_instance.StartTimer(30);
     }
 }

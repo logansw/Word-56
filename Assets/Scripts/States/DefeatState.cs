@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DefeatState : State
 {
+    public static Action e_OnDefeat;
+
     public DefeatState()
     {
         GameState = StateType.Defeat;
@@ -21,6 +24,6 @@ public class DefeatState : State
 
     public override void OnExit(StateController stateController)
     {
-        // Do nothing
+        Letter.ResetCooldowns = true;
     }
 }

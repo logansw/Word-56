@@ -18,11 +18,9 @@ public class Letter : MonoBehaviour
     private bool _onCooldown;
 
     // Letter Costs
-    private static Dictionary<char, int> s_consonantCostMap = new Dictionary<char, int>();
-    private static bool s_dictionaryInitialized;
-
     public delegate void LetterClicked(Letter letter);
     public static LetterClicked e_OnLetterClicked;
+    public static bool ResetCooldowns;
 
     void Start() {
         Initialize();
@@ -32,12 +30,14 @@ public class Letter : MonoBehaviour
     {
         e_OnLetterClicked += SetLetterCooldown;
         e_OnLetterClicked += CheckGameStart;
+        DefeatState.e_OnDefeat += EndCooldown;
     }
 
     void OnDisable()
     {
         e_OnLetterClicked -= SetLetterCooldown;
         e_OnLetterClicked -= CheckGameStart;
+        DefeatState.e_OnDefeat -= EndCooldown;
     }
 
     public void Initialize() {
@@ -78,12 +78,24 @@ public class Letter : MonoBehaviour
     }
 
     void Update() {
+        if (ResetCooldowns)
+        {
+            EndCooldown();
+            StartCoroutine(DelayedResetCooldowns());
+        }
+
         if (StateController.GetCurrentState() == State.StateType.GameOver || _onCooldown) {
             return;
         }
 
         HandleTouch();
         HandleKeypress();
+    }
+
+    private IEnumerator DelayedResetCooldowns()
+    {
+        yield return null;
+        ResetCooldowns = false;
     }
 
     private void HandleKeypress() {
@@ -165,7 +177,13 @@ public class Letter : MonoBehaviour
             _cooldownMask.transform.localScale = new Vector2(1, Mathf.Lerp(1, 0, t));
             yield return null;
         }
+        EndCooldown();
+    }
+
+    private void EndCooldown()
+    {
         _onCooldown = false;
+        _cooldownMask.transform.localScale = new Vector2(1, 0);
     }
 }
 
