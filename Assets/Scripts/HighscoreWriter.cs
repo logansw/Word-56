@@ -26,7 +26,6 @@ public class HighscoreWriter : MonoBehaviour
         }
     }
 
-    // TODO: Change so that it always requires you to record the score, but still asks for your name
     public void CheckOnLeaderboard()
     {
         _mainPanel.SetActive(false);
@@ -44,8 +43,7 @@ public class HighscoreWriter : MonoBehaviour
             _nameInputField.text = "Anonymous";
         }
         PlayerPrefs.SetString("PreviousName", _nameInputField.text);
-        // TODO: 9.26.2024 - Add daily/endless distinction here
-        bool daily = false;
+        bool daily = ConfigurationManager.s_instance.IsDailyMode;
         HighscoreData highscoreData = GetHighscoreData(daily);
         List<HighscoreData.Entry> entries = highscoreData.Highscores;
         HighscoreData.Entry targetEntry = new HighscoreData.Entry(_nameInputField.text, 0, 0, 0, 0);

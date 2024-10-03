@@ -8,6 +8,7 @@ using System.Text;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using System.Linq;
+using Unity.VisualScripting.FullSerializer;
 
 public class WordManager : MonoBehaviour {
     // Static
@@ -142,8 +143,8 @@ public class WordManager : MonoBehaviour {
 
     public void ChooseWords()
     {
-        string wordA = ChooseRandomWord(FiveLetterWords);
-        string wordB = ChooseRandomWord(SixLetterWords);
+        string wordA = ChooseRandomWord(FiveLetterWords, ConfigurationManager.s_instance.IsDailyMode);
+        string wordB = ChooseRandomWord(SixLetterWords, ConfigurationManager.s_instance.IsDailyMode);
         if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6)
         {
             Debug.Log("Invalid word lengths.");
@@ -153,10 +154,25 @@ public class WordManager : MonoBehaviour {
         FinalAnswerText.text = WordA + "\n" + WordB;
     }
 
-    private string ChooseRandomWord(List<string> words)
+    private string ChooseRandomWord(List<string> words, bool isDailyMode)
     {
-        int index = UnityEngine.Random.Range(0, words.Count);
-        return words[index];
+        if (isDailyMode)
+        {
+            int y = System.DateTime.Now.Year;
+            int m = System.DateTime.Now.Month;
+            int d = System.DateTime.Now.Day;
+            System.DateTime currentDateTime = new System.DateTime(y, m, d);
+            int seed = currentDateTime.GetHashCode();
+            seed = seed < 0 ? -seed : seed;
+            System.Random random = new System.Random(seed);
+            int index = random.Next(0, words.Count);
+            return words[index];
+        }
+        else
+        {
+            int index = UnityEngine.Random.Range(0, words.Count);
+            return words[index];
+        }
     }
 
     private int CountVowels(string word)

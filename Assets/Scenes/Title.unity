@@ -3451,7 +3451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Daily Puzzle (WIP)
+  m_text: Daily Puzzle
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4252,6 +4252,18 @@ MonoBehaviour:
           m_StringArgument: Main
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1917952147}
+        m_TargetAssemblyTypeName: ConfigurationManager, Assembly-CSharp
+        m_MethodName: SetDailyMode
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1741409855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4330,24 +4342,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47959f3ee215e4644a761655f25578a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChallengeMode: 0
-  SeriesLength: 0
   ConsecutiveVowelsAllowed: 0
-  _singleButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  _tripleButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  _pentaButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  _regularButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  _challengeButtons:
-  - {fileID: 0}
-  - {fileID: 0}
+  IsDailyMode: 0
+  AlreadyAttempted: 0
+  _dailyButton: {fileID: 2029165657}
 --- !u!4 &1917952148
 Transform:
   m_ObjectHideFlags: 0
@@ -4778,6 +4776,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: Main
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1917952147}
+        m_TargetAssemblyTypeName: ConfigurationManager, Assembly-CSharp
+        m_MethodName: SetDailyMode
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &2029165658
 MonoBehaviour:
