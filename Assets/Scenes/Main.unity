@@ -2885,6 +2885,7 @@ MonoBehaviour:
   SelectedLetter: 80
   IsSecondChance: 0
   Victory: 0
+  FinalAnswerText: {fileID: 1591676712}
 --- !u!4 &541894803
 Transform:
   m_ObjectHideFlags: 0
@@ -7285,7 +7286,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _nameInputField: {fileID: 1927544559}
   _addHighscorePanel: {fileID: 2022311825}
-  _finishPanel: {fileID: 967023316}
+  _mainPanel: {fileID: 1090098132}
+  _outcomeText: {fileID: 1992371685}
 --- !u!1 &1529470856
 GameObject:
   m_ObjectHideFlags: 0

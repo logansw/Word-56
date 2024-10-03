@@ -59,6 +59,8 @@ public class WordManager : MonoBehaviour {
     public char SelectedLetter;
     public bool IsSecondChance;
     public bool Victory;
+    public TMP_Text FinalAnswerText;
+
 
     void Awake() {
         s_instance = this;
@@ -148,6 +150,7 @@ public class WordManager : MonoBehaviour {
         }
         WordA = wordA;
         WordB = wordB;
+        FinalAnswerText.text = WordA + "\n" + WordB;
     }
 
     private string ChooseRandomWord(List<string> words)
@@ -229,6 +232,7 @@ public class WordManager : MonoBehaviour {
             if (SolvesRemaining <= 0)
             {
                 StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
+                HighscoreWriter.s_Instance.SetOutcomeText(false, IsSecondChance);
             }
         }
     }
@@ -236,8 +240,10 @@ public class WordManager : MonoBehaviour {
     private void Solve()
     {
         Victory = true;
-        StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);
+        HighscoreWriter.s_Instance.CheckOnLeaderboard();
         AudioManager.s_instance.Victory.Play();
+        Timer.s_instance.StopTimer();
+        HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
     }
 
     private void HandleGuess(Letter letter) {

@@ -10,16 +10,29 @@ public class HighscoreWriter : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _nameInputField;
     [SerializeField] private GameObject _addHighscorePanel;
-    [SerializeField] private GameObject _finishPanel;
+    [SerializeField] private GameObject _mainPanel;
+    public static HighscoreWriter s_Instance;
+    [SerializeField] private TMP_Text _outcomeText;
+
+    void Awake()
+    {
+        if (s_Instance == null)
+        {
+            s_Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // TODO: Change so that it always requires you to record the score, but still asks for your name
     public void CheckOnLeaderboard()
     {
-        _finishPanel.SetActive(false);
+        _mainPanel.SetActive(false);
         _addHighscorePanel.SetActive(true);
         if (PlayerPrefs.HasKey("PreviousName"))
         {
-            Debug.Log(PlayerPrefs.GetString("PreviousName"));
             _nameInputField.text = PlayerPrefs.GetString("PreviousName");
         }
     }
@@ -102,6 +115,26 @@ public class HighscoreWriter : MonoBehaviour
         else
         {
             return JSONTool.ReadData<HighscoreData>("_endlessScores.json");
+        }
+    }
+
+    public void SetOutcomeText(bool victory, bool secondChance)
+    {
+        if (victory && !secondChance)
+        {
+            _outcomeText.text = $"Victory! (+10)";
+        }
+        else if (victory && secondChance)
+        {
+            _outcomeText.text = $"Comeback! (+4)";
+        }
+        else if (!victory && !secondChance)
+        {
+            _outcomeText.text = $"Conceded (+1.5)";
+        }
+        else
+        {
+            _outcomeText.text = $"Defeat (+0)";
         }
     }
 }
