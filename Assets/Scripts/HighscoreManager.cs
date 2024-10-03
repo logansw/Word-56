@@ -4,17 +4,22 @@ using UnityEngine;
 using System.Text;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class HighscoreManager : MonoBehaviour
 {
     public static HighscoreManager s_instance;
-    public const int MAX_ENTRIES = 40;
+    public const int MAX_ENTRIES = 100;
+    public const int ENTRIES_PER_PAGE = 5;
     private HighscoreData _dailyScores;
     private HighscoreData _endlessScores;
     [SerializeField] private EntryUI[] _entryUIs;
     [SerializeField] private GameObject _entriesPanel;
     private int _currentPage;
     private HighscoreData _currentDataOpen;
+    [SerializeField] private Button _dailyButton;
+    [SerializeField] private Button _endlessButton;
+    [SerializeField] private TMP_Text _headerText;
 
     private void Awake()
     {
@@ -27,6 +32,18 @@ public class HighscoreManager : MonoBehaviour
 
     public void OpenScores(bool daily)
     {
+        if (daily)
+        {
+            _headerText.text = "Daily Highscores";
+            _dailyButton.gameObject.SetActive(false);
+            _endlessButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            _headerText.text = "Endless Highscores";
+            _dailyButton.gameObject.SetActive(true);
+            _endlessButton.gameObject.SetActive(false);
+        }
         _currentDataOpen = GetHighscoreData(daily);
         _currentPage = 0;
         _entriesPanel.gameObject.SetActive(true);
@@ -36,8 +53,8 @@ public class HighscoreManager : MonoBehaviour
 
     public void DisplayScores(int page)
     {
-        int startIndex = page * 10 + 1;
-        for (int i = 0; i < 5; i++)
+        int startIndex = page * ENTRIES_PER_PAGE + 1;
+        for (int i = 0; i < ENTRIES_PER_PAGE; i++)
         {
             if (i + startIndex - 1 >= _currentDataOpen.Highscores.Count)
             {
@@ -73,7 +90,7 @@ public class HighscoreManager : MonoBehaviour
         {
             return;
         }
-        if ((_currentPage + change) * 10 > _currentDataOpen.Highscores.Count)
+        if ((_currentPage + change) * ENTRIES_PER_PAGE > _currentDataOpen.Highscores.Count)
         {
             return;
         }

@@ -37,10 +37,7 @@ public class ConfigurationManager : MonoBehaviour
 
     void Update()
     {
-        if (NextDay.Subtract(DateTime.Now).Seconds < 0)
-        {
-            Reset();
-        }
+        CheckReset();
     }
 
     void Initialize()
@@ -60,6 +57,9 @@ public class ConfigurationManager : MonoBehaviour
             DateTime.Now.Month > PlayerPrefs.GetInt("LastLogInMonth") ||
             DateTime.Now.Day > PlayerPrefs.GetInt("LastLogInDay"))
         {
+            Debug.Log("Resetting!");
+            Debug.Log($"{DateTime.Now.Year}/{DateTime.Now.Month}/{DateTime.Now.Day}");
+            Debug.Log($"{PlayerPrefs.GetInt("LastLogInYear")}/{PlayerPrefs.GetInt("LastLogInMonth")}/{PlayerPrefs.GetInt("LastLogInDay")}");
             Reset();
         }
     }
@@ -69,6 +69,9 @@ public class ConfigurationManager : MonoBehaviour
         PlayerPrefs.SetInt("TodaySolved", 0);
         AlreadyAttempted = false;
         _dailyButton.interactable = true;
+        PlayerPrefs.SetInt("LastLogInYear", DateTime.Now.Year);
+        PlayerPrefs.SetInt("LastLogInMonth", DateTime.Now.Month);
+        PlayerPrefs.SetInt("LastLogInDay", DateTime.Now.Day);
     }
 
     public void SetDailyMode(bool isDailyMode)
