@@ -8,6 +8,7 @@ using System.Text;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using System.Linq;
+using Unity.VisualScripting.FullSerializer;
 
 public class WordManager : MonoBehaviour {
     // Static
@@ -19,41 +20,56 @@ public class WordManager : MonoBehaviour {
     private bool _initialized;
     public HashSet<Letter> LettersFound;
 
-    public int LettersPurchased;
-    public int VowelsPurchased;
+    private int _lettersRemaining;
+    public int LettersRemaining
+    {
+        get
+        {
+            return _lettersRemaining;
+        }
+        set
+        {
+            _lettersRemaining = value;
+            _guessCounterText.text = "Guesses Left: " + LettersRemaining;
+        }
+    }
+    private int _solvesRemaining;
+    public int SolvesRemaining
+    {
+        get
+        {
+            return _solvesRemaining;
+        }
+        set
+        {
+            _solvesRemaining = value;
+            _solveCounterText.text = "Solves Left: " + SolvesRemaining;
+        }
+    }
+
     public bool VowelPurchasedLastRound;
-    public int CommonsPurchased;
 
      // External References
     [SerializeField] private TMP_Text _guessCounterText;
     [SerializeField] private TMP_Text _solveCounterText;
     public List<Letter> Letters;
     [SerializeField] private Button _enterButton;
-    private DateTime _startTime;
-    public int LetterPurchases;
-    public int TimeElapsed;
-    public int SolvePurchases;
-    public int SelectionBonus;
-    public int TimeBonus;
     [SerializeField] private Canvas _intermisisonCanvas;
-    public int SolvePurchaseCost;
     private ConfigurationManager _configMan;
     public List<SolveLetter> SolveLetters = new List<SolveLetter>();
     public char SelectedLetter;
+    public bool IsSecondChance;
+    public bool Victory;
+    public TMP_Text FinalAnswerText;
+
 
     void Awake() {
         s_instance = this;
-    }
-
-    void Start() {
         _configMan = ConfigurationManager.s_instance;
     }
 
     public void StartRound() {
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
-        _guessCounterText.text = "Guesses Left: 13";
-        _solveCounterText.text = "Solves Left: 2";
-        _startTime = DateTime.Now;
     }
 
     void OnEnable() {
@@ -64,25 +80,32 @@ public class WordManager : MonoBehaviour {
         Letter.e_OnLetterClicked -= OnLetterClicked;
     }
 
-    public void Initialize() {
+    public void Initialize()
+    {
         if (_initialized) { return; }
         FiveLetterWords = new List<string>();
         string filepathFive = Application.streamingAssetsPath + "/FiveLetterWords.txt";
-        try {
-            using (StreamReader reader = new StreamReader(filepathFive)) {
-                while (!reader.EndOfStream) {
+        try
+        {
+            using (StreamReader reader = new StreamReader(filepathFive))
+            {
+                while (!reader.EndOfStream)
+                {
                     string line = reader.ReadLine();
                     string[] words = line.Split('\t');
                     FiveLetterWords.AddRange(words);
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Debug.Log(e.Message);
         }
 
         SixLetterWords = new List<string>();
         string filepathSix = Application.streamingAssetsPath + "/SixLetterWords.txt";
-        try {
+        try
+        {
             using (StreamReader reader = new StreamReader(filepathSix)) {
                 while (!reader.EndOfStream) {
                     string line = reader.ReadLine();
@@ -90,12 +113,13 @@ public class WordManager : MonoBehaviour {
                     SixLetterWords.AddRange(words);
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Debug.Log(e.Message);
         }
 
         SetLetterStates();
-
         _initialized = true;
     }
 
@@ -110,33 +134,44 @@ public class WordManager : MonoBehaviour {
         {
             letter.Reset();
         }
-        LettersPurchased = 0;
-        VowelsPurchased = 0;
-        CommonsPurchased = 0;
-        LetterPurchases = 0;
-        TimeElapsed = 0;
-        SolvePurchases = 0;
-        _guessCounterText.text = "Guesses Left: 13";
-        _solveCounterText.text = "Solves Left: 2";
+        LettersRemaining = 13;
+        SolvesRemaining = 2;
         SetLetterStates();
+        Victory = false;
     }
 
     public void ChooseWords()
     {
-        string wordA = ChooseRandomWord(FiveLetterWords);
-        string wordB = ChooseRandomWord(SixLetterWords);
+        string wordA = ChooseRandomWord(FiveLetterWords, ConfigurationManager.s_instance.IsDailyMode);
+        string wordB = ChooseRandomWord(SixLetterWords, ConfigurationManager.s_instance.IsDailyMode);
         if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6)
         {
             Debug.Log("Invalid word lengths.");
         }
         WordA = wordA;
         WordB = wordB;
+        FinalAnswerText.text = WordA + "\n" + WordB;
     }
 
-    private string ChooseRandomWord(List<string> words)
+    private string ChooseRandomWord(List<string> words, bool isDailyMode)
     {
-        int index = UnityEngine.Random.Range(0, words.Count);
-        return words[index];
+        if (isDailyMode)
+        {
+            int y = System.DateTime.Now.Year;
+            int m = System.DateTime.Now.Month;
+            int d = System.DateTime.Now.Day;
+            System.DateTime currentDateTime = new System.DateTime(y, m, d);
+            int seed = currentDateTime.GetHashCode();
+            seed = seed < 0 ? -seed : seed;
+            System.Random random = new System.Random(seed);
+            int index = random.Next(0, words.Count);
+            return words[index];
+        }
+        else
+        {
+            int index = UnityEngine.Random.Range(0, words.Count);
+            return words[index];
+        }
     }
 
     private int CountVowels(string word)
@@ -154,11 +189,10 @@ public class WordManager : MonoBehaviour {
 
     private void OnLetterClicked(Letter letter)
     {
-        if (StateController.GetCurrentState() == State.StateType.Buy)
+        if (StateController.GetCurrentState() == State.StateType.Buy && LettersRemaining > 0)
         {
             PurchaseLetter(letter);
             HandleGuess(letter);
-            _guessCounterText.text = "Guesses: " + (13 - LettersPurchased);
             SetLetterStates();
         }
         else if (StateController.GetCurrentState() == State.StateType.Solve)
@@ -202,7 +236,7 @@ public class WordManager : MonoBehaviour {
     }
 
     public void SubmitSolveAttempt() {
-        SolvePurchases++;
+        SolvesRemaining--;
         // Check if the solve attempt is correct
         string solveAttempt = GetCurrentGuess();
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
@@ -210,30 +244,21 @@ public class WordManager : MonoBehaviour {
         } else {
             CancelSolveAttempt();
             AudioManager.s_instance.Negative.Play();
-            if (SolvePurchases >= 2)
+            if (SolvesRemaining <= 0)
             {
                 StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
+                HighscoreWriter.s_Instance.SetOutcomeText(false, IsSecondChance);
             }
         }
-        _solveCounterText.text = "Solves: " + (2 - SolvePurchases);
     }
 
     private void Solve()
     {
-        TimeSpan timeSpan = DateTime.Now - _startTime;
-        int seconds = (int)timeSpan.TotalSeconds;
-        TimeElapsed = seconds;
-        TimeBonus = 1000 - (TimeElapsed / 30 * 50);
-        if (TimeElapsed >= 300)
-        {
-            TimeBonus = 0;
-        }
-        if (LettersPurchased <= 14)
-        {
-            SelectionBonus = (int)(50 * Mathf.Pow(2, 14 - LettersPurchased));
-        }
-        StateController.s_instance.ChangeState(StateController.s_instance.IntermissionState);
+        Victory = true;
+        HighscoreWriter.s_Instance.CheckOnLeaderboard();
         AudioManager.s_instance.Victory.Play();
+        Timer.s_instance.StopTimer();
+        HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
     }
 
     private void HandleGuess(Letter letter) {
@@ -265,10 +290,9 @@ public class WordManager : MonoBehaviour {
     }
 
     private void PurchaseLetter(Letter letter) {
-        LettersPurchased++;
+        LettersRemaining--;
         letter.Purchased = true;
         if (letter.IsVowel()) {
-            VowelsPurchased++;
             VowelPurchasedLastRound = true;
         } else {
             VowelPurchasedLastRound = false;
@@ -286,7 +310,11 @@ public class WordManager : MonoBehaviour {
             }
             else if (letter.IsVowel())
             {
-                if (LettersPurchased == 0 || LettersPurchased == 1 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
+                if (IsSecondChance && (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                {
+                    state = LetterState.Disabled;
+                }
+                else if (!IsSecondChance && (LettersRemaining == 13 || LettersRemaining == 12 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
                 {
                     state = LetterState.Disabled;
                 }
@@ -295,22 +323,24 @@ public class WordManager : MonoBehaviour {
             letter.LetterState = state;
         }
 
-        if (LettersPurchased >= 13)
+        if (LettersRemaining == 0)
         {
             foreach (Letter letter in Letters)
             {
-                if (!letter.Purchased)
+                if (letter.LetterState == LetterState.Default)
                 {
-                    letter.LetterState = LetterState.Disabled;
+                    if (StateController.GetCurrentState() == State.StateType.Buy)
+                    {
+                        letter.LetterState = LetterState.Disabled;
+                    }
                 }
             }
-            RenderLetters();
         }
 
         RenderLetters();
     }
 
-    private void RenderLetters() {
+    public void RenderLetters() {
         foreach (Letter letter in Letters) {
             letter.RenderLetter();
         }
@@ -318,5 +348,38 @@ public class WordManager : MonoBehaviour {
 
     public void RenderEnterButton() {
         _enterButton.interactable = GetCurrentGuess().Length == 11;
+    }
+
+    public void GiveSecondChance()
+    {
+        if (IsSecondChance)
+        {
+            return;
+        }
+        IsSecondChance = true;
+        StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
+        GameManager.s_instance.SetActivePanel(0);
+        LettersRemaining += 2;
+        SolvesRemaining += 1;
+        Timer.s_instance.StartTimer(40);
+        foreach (Letter letter in Letters)
+        {
+            if (letter.IsVowel())
+            {
+                if (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
+                {
+                    letter.LetterState = LetterState.Disabled;
+                }
+                else
+                {
+                    letter.LetterState = LetterState.Default;
+                }
+            }
+            else if (letter.LetterState == LetterState.Disabled)
+            {
+                letter.LetterState = LetterState.Default;
+            }
+        }
+        RenderLetters();
     }
 }

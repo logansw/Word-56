@@ -4,74 +4,99 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class HighscoreWriter : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _nameInputField;
     [SerializeField] private GameObject _addHighscorePanel;
-    [SerializeField] private GameObject _finishPanel;
+    [SerializeField] private GameObject _mainPanel;
+    public static HighscoreWriter s_Instance;
+    [SerializeField] private TMP_Text _outcomeText;
 
-    public void CheckOnLeaderboard() {
-        bool regular = !ConfigurationManager.s_instance.ChallengeMode;
-        int seriesLength = ConfigurationManager.s_instance.SeriesLength;
-        // if (OnLeaderboard(GameManager.s_instance.GetFinalScore(), regular, seriesLength)) {
-        //     _finishPanel.SetActive(false);
-        //     _addHighscorePanel.SetActive(true);
-        //     if (PlayerPrefs.HasKey("PreviousName")) {
-        //         _nameInputField.text = PlayerPrefs.GetString("PreviousName");
-        //     }
-        // } else {
-        //     SceneManager.LoadScene("Title");
-        // }
-        SceneManager.LoadScene("Title");
-    }
-
-    public bool OnLeaderboard(int newScore, bool regular, int seriesLength) {
-        HighscoreData highscoreData = GetHighscoreData(regular, seriesLength);
-        return OnTheLeaderboard(highscoreData.Highscores, newScore);
-    }
-
-    private bool OnTheLeaderboard(List<HighscoreData.Entry> highscores, int newScore) {
-        if (highscores.Count < HighscoreManager.MAX_ENTRIES) {
-            return true;
+    void Awake()
+    {
+        if (s_Instance == null)
+        {
+            s_Instance = this;
         }
-        foreach (HighscoreData.Entry entry in highscores) {
-            if (newScore > entry.Score) {
-                return true;
-            }
+        else
+        {
+            Destroy(gameObject);
         }
-        return false;
     }
 
-    public void SaveHighscore() {
-        // TODO: Write outcome here
-        SceneManager.LoadScene("Title");
+    public void CheckOnLeaderboard()
+    {
+        _mainPanel.SetActive(false);
+        _addHighscorePanel.SetActive(true);
+        if (PlayerPrefs.HasKey("PreviousName"))
+        {
+            _nameInputField.text = PlayerPrefs.GetString("PreviousName");
+        }
     }
 
-    public void SkipHighscore() {
-        SceneManager.LoadScene("Title");
-    }
-
-    public void WriteHighscore(int score) {
-        if (_nameInputField.text.Length == 0) {
+    public void SaveHighscore()
+    {
+        if (_nameInputField.text.Length == 0)
+        {
             _nameInputField.text = "Anonymous";
         }
         PlayerPrefs.SetString("PreviousName", _nameInputField.text);
-        bool regular = !ConfigurationManager.s_instance.ChallengeMode;
-        int seriesLength = ConfigurationManager.s_instance.SeriesLength;
-        HighscoreData highscoreData = GetHighscoreData(regular, seriesLength);
-        highscoreData.Highscores.Add(new HighscoreData.Entry(_nameInputField.text, score, DateTime.Now));
+        bool daily = ConfigurationManager.s_instance.IsDailyMode;
+        HighscoreData highscoreData = GetHighscoreData(daily);
+        List<HighscoreData.Entry> entries = highscoreData.Highscores;
+        HighscoreData.Entry targetEntry = new HighscoreData.Entry(_nameInputField.text, 0, 0, 0, 0);
+        for (int i = 0; i < entries.Count; i++)
+        {
+            HighscoreData.Entry entry = entries[i];
+            if (entry.Name == _nameInputField.text)
+            {
+                targetEntry = entry;
+                entries.Remove(entry);
+                break;
+            }
+        }
+
+        if (WordManager.s_instance.Victory)
+        {
+            if (WordManager.s_instance.IsSecondChance)
+            {
+                targetEntry.RetryWins = targetEntry.RetryWins + 1;
+            }
+            else
+            {
+                targetEntry.CleanWins = targetEntry.CleanWins + 1;
+            }
+        }
+        else 
+        {
+            if (WordManager.s_instance.IsSecondChance)
+            {
+                targetEntry.RetryLosses = targetEntry.RetryLosses + 1;
+            }
+            else
+            {
+                targetEntry.CleanLosses = targetEntry.CleanLosses + 1;
+            }
+        }
+        targetEntry.CalculateStats();
+        highscoreData.Highscores.Add(targetEntry);
         highscoreData.Highscores = SortAndTruncateHighscores(highscoreData.Highscores);
 
-        string path = GetHighscoreDataPath(regular, seriesLength);
+        string path = daily ? "_dailyScores.json" : "_endlessScores.json";
         JSONTool.WriteData<HighscoreData>(highscoreData, path);
+        SceneManager.LoadScene("Title");
     }
 
-    private List<HighscoreData.Entry> SortAndTruncateHighscores(List<HighscoreData.Entry> highscores) {
+    private List<HighscoreData.Entry> SortAndTruncateHighscores(List<HighscoreData.Entry> highscores)
+    {
         List<HighscoreData.Entry> highscoresTruncated = new List<HighscoreData.Entry>();
         highscores.Sort((x, y) => y.CompareTo(x));
-        for (int i = 0; i < HighscoreManager.MAX_ENTRIES; i++) {
-            if (i >= highscores.Count) {
+        for (int i = 0; i < HighscoreManager.MAX_ENTRIES; i++)
+        {
+            if (i >= highscores.Count)
+            {
                 break;
             }
             highscoresTruncated.Add(highscores[i]);
@@ -79,49 +104,35 @@ public class HighscoreWriter : MonoBehaviour
         return highscoresTruncated;
     }
 
-    private HighscoreData GetHighscoreData(bool regular, int seriesLength) {
-        if (regular) {
-            switch (seriesLength) {
-                case 1:
-                    return JSONTool.ReadData<HighscoreData>("_regularSingleScores.json");
-                case 3:
-                    return JSONTool.ReadData<HighscoreData>("_regularTripleScores.json");
-                case 5:
-                    return JSONTool.ReadData<HighscoreData>("_regularPentaScores.json");
-            }
-        } else {
-            switch (seriesLength) {
-                case 1:
-                    return JSONTool.ReadData<HighscoreData>("_challengeSingleScores.json");
-                case 3:
-                    return JSONTool.ReadData<HighscoreData>("_challengeTripleScores.json");
-                case 5:
-                    return JSONTool.ReadData<HighscoreData>("_challengePentaScores.json");
-            }
+    private HighscoreData GetHighscoreData(bool daily)
+    {
+        if (daily)
+        {
+            return JSONTool.ReadData<HighscoreData>("_dailyScores.json");
         }
-        return null;
+        else
+        {
+            return JSONTool.ReadData<HighscoreData>("_endlessScores.json");
+        }
     }
 
-    private string GetHighscoreDataPath(bool regular, int seriesLength) {
-        if (regular) {
-            switch (seriesLength) {
-                case 1:
-                    return "_regularSingleScores.json";
-                case 3:
-                    return "_regularTripleScores.json";
-                case 5:
-                    return "_regularPentaScores.json";
-            }
-        } else {
-            switch (seriesLength) {
-                case 1:
-                    return "_challengeSingleScores.json";
-                case 3:
-                    return "_challengeTripleScores.json";
-                case 5:
-                    return "_challengePentaScores.json";
-            }
+    public void SetOutcomeText(bool victory, bool secondChance)
+    {
+        if (victory && !secondChance)
+        {
+            _outcomeText.text = $"Victory! (+10)";
         }
-        return null;
+        else if (victory && secondChance)
+        {
+            _outcomeText.text = $"Comeback! (+4)";
+        }
+        else if (!victory && !secondChance)
+        {
+            _outcomeText.text = $"Conceded (+1.5)";
+        }
+        else
+        {
+            _outcomeText.text = $"Defeat (+0)";
+        }
     }
 }

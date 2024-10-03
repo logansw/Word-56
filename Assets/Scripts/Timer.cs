@@ -22,9 +22,9 @@ public class Timer : MonoBehaviour
         StopTimer();
     }
 
-    public void StartTimer()
+    public void StartTimer(int time = SOLVE_TIME)
     {
-        _secondsRemaining = SOLVE_TIME;
+        _secondsRemaining = time;
         _updateCoroutine = StartCoroutine(UpdateStopwatch());
     }
 
@@ -49,6 +49,7 @@ public class Timer : MonoBehaviour
             if (_secondsRemaining <= 0)
             {
                 _text.text = "00:00";
+                HighscoreWriter.s_Instance.SetOutcomeText(false, WordManager.s_instance.IsSecondChance);
                 StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
                 yield break;
             }

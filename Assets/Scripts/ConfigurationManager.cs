@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,72 +12,76 @@ public class ConfigurationManager : MonoBehaviour
     public static ConfigurationManager s_instance;
 
     // Public
-    public bool ChallengeMode;
-    public int SeriesLength;
     public bool ConsecutiveVowelsAllowed;
+    public DateTime NextDay;
 
     // External References
-    [SerializeField] private UnityEngine.UI.Image[] _singleButtons;
-    [SerializeField] private UnityEngine.UI.Image[] _tripleButtons;
-    [SerializeField] private UnityEngine.UI.Image[] _pentaButtons;
-    [SerializeField] private UnityEngine.UI.Image[] _regularButtons;
-    [SerializeField] private UnityEngine.UI.Image[] _challengeButtons;
+    public bool IsDailyMode;
+    public bool AlreadyAttempted;
+    [SerializeField] private Button _dailyButton;
 
-    void Awake() {
-        if (s_instance != null) {
+    void Awake()
+    {
+        if (s_instance != null)
+        {
             Destroy(s_instance.gameObject);
         }
         s_instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start() {
-        ChallengeMode = false;
-        SeriesLength = 1;
+    void Start()
+    {
+        Initialize();
     }
 
-    public void SetChallengeMode(bool enabled) {
-        ChallengeMode = enabled;
-        foreach (UnityEngine.UI.Image button in _regularButtons) {
-            button.color = Color.white;
-        }
-        foreach (UnityEngine.UI.Image button in _challengeButtons) {
-            button.color = Color.white;
-        }
-        UnityEngine.UI.Image[] buttons = enabled ? _challengeButtons : _regularButtons;
-        foreach (UnityEngine.UI.Image button in buttons) {
-            button.color = new Color(255/255f, 95/255f, 212/255f, 1f);
+    void Update()
+    {
+        CheckReset();
+    }
+
+    void Initialize()
+    {
+        CheckReset();
+        AlreadyAttempted = PlayerPrefs.GetInt("TodaySolved") == 1;
+        _dailyButton.interactable = !AlreadyAttempted;
+        NextDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(1);
+        PlayerPrefs.SetInt("LastLogInYear", DateTime.Now.Year);
+        PlayerPrefs.SetInt("LastLogInMonth", DateTime.Now.Month);
+        PlayerPrefs.SetInt("LastLogInDay", DateTime.Now.Day);
+    }
+
+    public void CheckReset()
+    {
+        if (DateTime.Now.Year > PlayerPrefs.GetInt("LastLogInYear") ||
+            DateTime.Now.Month > PlayerPrefs.GetInt("LastLogInMonth") ||
+            DateTime.Now.Day > PlayerPrefs.GetInt("LastLogInDay"))
+        {
+            Debug.Log("Resetting!");
+            Debug.Log($"{DateTime.Now.Year}/{DateTime.Now.Month}/{DateTime.Now.Day}");
+            Debug.Log($"{PlayerPrefs.GetInt("LastLogInYear")}/{PlayerPrefs.GetInt("LastLogInMonth")}/{PlayerPrefs.GetInt("LastLogInDay")}");
+            Reset();
         }
     }
 
-    public void SetSeriesLength(int numberOfRounds) {
-        SeriesLength = numberOfRounds;
-        foreach (UnityEngine.UI.Image button in _singleButtons) {
-            button.color = Color.white;
+    public void Reset()
+    {
+        PlayerPrefs.SetInt("TodaySolved", 0);
+        AlreadyAttempted = false;
+        _dailyButton.interactable = true;
+        PlayerPrefs.SetInt("LastLogInYear", DateTime.Now.Year);
+        PlayerPrefs.SetInt("LastLogInMonth", DateTime.Now.Month);
+        PlayerPrefs.SetInt("LastLogInDay", DateTime.Now.Day);
+    }
+
+    public void SetDailyMode(bool isDailyMode)
+    {
+        if (isDailyMode)
+        {
+            PlayerPrefs.SetInt("TodaySolved", 1);
+            AlreadyAttempted = true;
+            Initialize();
         }
-        foreach (UnityEngine.UI.Image button in _tripleButtons) {
-            button.color = Color.white;
-        }
-        foreach (UnityEngine.UI.Image button in _pentaButtons) {
-            button.color = Color.white;
-        }
-        UnityEngine.UI.Image[] buttons;
-        switch (numberOfRounds) {
-            case 1:
-                buttons = _singleButtons;
-                break;
-            case 3:
-                buttons = _tripleButtons;
-                break;
-            case 5:
-                buttons = _pentaButtons;
-                break;
-            default:
-                buttons = _singleButtons;
-                break;
-        }
-        foreach (UnityEngine.UI.Image button in buttons) {
-            button.color = new Color(255/255f, 95/255f, 212/255f, 1f);
-        }
+        IsDailyMode = isDailyMode;
     }
 }

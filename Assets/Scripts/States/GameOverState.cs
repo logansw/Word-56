@@ -15,7 +15,7 @@ public class GameOverState : State
     }
     public override void OnEnter(StateController stateController)
     {
-        GameManager.s_instance.SetActivePanel(2);
+        GameManager.s_instance.SetActivePanel(1);
     }
 
     public override void UpdateState(StateController stateController)

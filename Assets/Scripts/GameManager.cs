@@ -40,9 +40,4 @@ public class GameManager : MonoBehaviour
         }
         _panels[index].SetActive(true);
     }
-
-    public bool IsLastRound()
-    {
-        return CurrentRound == ConfigurationManager.s_instance.SeriesLength;
-    }
 }

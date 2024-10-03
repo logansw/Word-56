@@ -18,7 +18,6 @@ public class StateController : MonoBehaviour
     public BuyState BuyState;
     public SolveState SolveState;
     public GameOverState GameOverState;
-    public IntermissionState IntermissionState;
     public DefeatState DefeatState;
     public VictoryState VictoryState;
     private State _previousState;
@@ -51,7 +50,14 @@ public class StateController : MonoBehaviour
     }
 
     public static State.StateType GetCurrentState() {
-        return s_instance.CurrentState.GameState;
+        if (s_instance.CurrentState == null)
+        {
+            return State.StateType.PreStart;
+        }
+        else
+        {
+            return s_instance.CurrentState.GameState;
+        }
     }
 
     public void ChangeToPreviousState() {

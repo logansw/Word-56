@@ -8,7 +8,8 @@ public class HighscoreData : IJSONData<HighscoreData>
     public List<Entry> Highscores;
     public string PreviousName;
 
-    public HighscoreData CreateNewFile() {
+    public HighscoreData CreateNewFile()
+    {
         HighscoreData data = new HighscoreData();
         data.Highscores = new List<Entry>();
         data.PreviousName = "Name";
@@ -16,27 +17,45 @@ public class HighscoreData : IJSONData<HighscoreData>
     }
 
     [System.Serializable]
-    public struct Entry {
+    public struct Entry
+    {
         public string Name;
-        public int Score;
-        public int Day;
-        public int Month;
-        public int Year;
+        public int CleanWins;
+        public int RetryWins;
+        public int CleanLosses;
+        public int RetryLosses;
+        public float AverageScore;
+        public float TotalScore;
+        public int TotalGames;
 
-        public Entry(string name, int score, DateTime date) {
+        public Entry(string name, int cleanWins, int retryWins, int cleanLosses, int retryLosses)
+        {
             Name = name;
-            Score = score;
-            Day = date.Day;
-            Month = date.Month;
-            Year = date.Year;
+            CleanWins = cleanWins;
+            RetryWins = retryWins;
+            CleanLosses = cleanLosses;
+            RetryLosses = retryLosses;
+            TotalScore = 0;
+            TotalGames = 0;
+            AverageScore = 0;
+            CalculateStats();
         }
 
-        public int CompareTo(Entry other) {
-            return Score.CompareTo(other.Score);
+        public void CalculateStats()
+        {
+            TotalGames = CleanWins + RetryWins + CleanLosses + RetryLosses;
+            TotalScore = CleanWins * 10f + RetryWins * 4f + CleanLosses * 1.5f + RetryLosses * 0f;
+            AverageScore = (float)Math.Round(TotalScore / TotalGames, 3);
         }
 
-        public override string ToString() {
-            return $"{Name} - {Score}";
+        public override string ToString()
+        {
+            return $"{Name} - {CleanWins} - {RetryWins} - {CleanLosses} - {RetryLosses} - {TotalScore} - {TotalGames} - {AverageScore}";
+        }
+
+        public int CompareTo(Entry other)
+        {
+            return AverageScore.CompareTo(other.AverageScore);
         }
     }
 }
