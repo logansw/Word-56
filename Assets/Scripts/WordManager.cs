@@ -120,7 +120,6 @@ public class WordManager : MonoBehaviour {
         }
 
         SetLetterStates();
-
         _initialized = true;
     }
 
@@ -311,7 +310,11 @@ public class WordManager : MonoBehaviour {
             }
             else if (letter.IsVowel())
             {
-                if (!IsSecondChance && (LettersRemaining == 13 || LettersRemaining == 12 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                if (IsSecondChance && (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                {
+                    state = LetterState.Disabled;
+                }
+                else if (!IsSecondChance && (LettersRemaining == 13 || LettersRemaining == 12 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
                 {
                     state = LetterState.Disabled;
                 }
@@ -337,7 +340,7 @@ public class WordManager : MonoBehaviour {
         RenderLetters();
     }
 
-    private void RenderLetters() {
+    public void RenderLetters() {
         foreach (Letter letter in Letters) {
             letter.RenderLetter();
         }
@@ -358,6 +361,25 @@ public class WordManager : MonoBehaviour {
         GameManager.s_instance.SetActivePanel(0);
         LettersRemaining += 2;
         SolvesRemaining += 1;
-        Timer.s_instance.StartTimer(30);
+        Timer.s_instance.StartTimer(40);
+        foreach (Letter letter in Letters)
+        {
+            if (letter.IsVowel())
+            {
+                if (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
+                {
+                    letter.LetterState = LetterState.Disabled;
+                }
+                else
+                {
+                    letter.LetterState = LetterState.Default;
+                }
+            }
+            else if (letter.LetterState == LetterState.Disabled)
+            {
+                letter.LetterState = LetterState.Default;
+            }
+        }
+        RenderLetters();
     }
 }

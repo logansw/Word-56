@@ -139,19 +139,40 @@ public class Letter : MonoBehaviour
     }
 
     public void RenderLetter() {
-        switch (LetterState) {
-            case LetterState.Default:
-                _spriteRenderer.color = Color.white;
-                break;
-            case LetterState.Disabled:
-                _spriteRenderer.color = Color.gray;
-                break;
-            case LetterState.Correct:
-                _spriteRenderer.color = Color.green;
-                break;
-            case LetterState.Incorrect:
-                _spriteRenderer.color = Color.black;
-                break;
+        if (StateController.GetCurrentState() == State.StateType.Solve)
+        {
+            switch (LetterState) {
+                case LetterState.Default:
+                    _spriteRenderer.color = Color.white;
+                    break;
+                case LetterState.Disabled:
+                    _spriteRenderer.color = Color.white;
+                    break;
+                case LetterState.Correct:
+                    _spriteRenderer.color = Color.black;
+                    break;
+                case LetterState.Incorrect:
+                    _spriteRenderer.color = Color.black;
+                    break;
+            }
+        }
+        else
+        {
+            switch (LetterState)
+            {
+                case LetterState.Default:
+                    _spriteRenderer.color = Color.white;
+                    break;
+                case LetterState.Disabled:
+                    _spriteRenderer.color = Color.gray;
+                    break;
+                case LetterState.Correct:
+                    _spriteRenderer.color = Color.green;
+                    break;
+                case LetterState.Incorrect:
+                    _spriteRenderer.color = Color.black;
+                    break;
+            }
         }
     }
 
@@ -196,5 +217,5 @@ public enum LetterState {
     Default,
     Disabled,
     Correct,
-    Incorrect
+    Incorrect,
 }

@@ -50,7 +50,14 @@ public class StateController : MonoBehaviour
     }
 
     public static State.StateType GetCurrentState() {
-        return s_instance.CurrentState.GameState;
+        if (s_instance.CurrentState == null)
+        {
+            return State.StateType.PreStart;
+        }
+        else
+        {
+            return s_instance.CurrentState.GameState;
+        }
     }
 
     public void ChangeToPreviousState() {

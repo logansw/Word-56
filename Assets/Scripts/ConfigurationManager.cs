@@ -77,6 +77,7 @@ public class ConfigurationManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("TodaySolved", 1);
             AlreadyAttempted = true;
+            Initialize();
         }
         IsDailyMode = isDailyMode;
     }
