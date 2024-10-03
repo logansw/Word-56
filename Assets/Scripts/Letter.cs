@@ -29,14 +29,12 @@ public class Letter : MonoBehaviour
     void OnEnable()
     {
         e_OnLetterClicked += SetLetterCooldown;
-        e_OnLetterClicked += CheckGameStart;
         DefeatState.e_OnDefeat += EndCooldown;
     }
 
     void OnDisable()
     {
         e_OnLetterClicked -= SetLetterCooldown;
-        e_OnLetterClicked -= CheckGameStart;
         DefeatState.e_OnDefeat -= EndCooldown;
     }
 
@@ -54,6 +52,7 @@ public class Letter : MonoBehaviour
 
     private void SetLetterCooldown(Letter letter)
     {
+        CheckGameStart(letter);
         StartCoroutine(Cooldown());
     }
 
