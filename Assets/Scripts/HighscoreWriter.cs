@@ -19,6 +19,7 @@ public class HighscoreWriter : MonoBehaviour
         _addHighscorePanel.SetActive(true);
         if (PlayerPrefs.HasKey("PreviousName"))
         {
+            Debug.Log(PlayerPrefs.GetString("PreviousName"));
             _nameInputField.text = PlayerPrefs.GetString("PreviousName");
         }
     }
