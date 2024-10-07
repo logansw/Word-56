@@ -135,7 +135,7 @@ public class WordManager : MonoBehaviour {
             letter.Reset();
         }
         LettersRemaining = 13;
-        SolvesRemaining = 2;
+        SolvesRemaining = 3;
         SetLetterStates();
         Victory = false;
     }

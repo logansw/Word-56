@@ -115,4 +115,13 @@ public class HighscoreManager : MonoBehaviour
             return _endlessScores;
         }
     }
+
+    public void ClearHighscores()
+    {
+        _dailyScores.Highscores.Clear();
+        _endlessScores.Highscores.Clear();
+        JSONTool.WriteData(_dailyScores, "_dailyScores.json");
+        JSONTool.WriteData(_endlessScores, "_endlessScores.json");
+        DisplayScores(0);
+    }
 }
