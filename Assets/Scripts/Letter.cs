@@ -52,17 +52,7 @@ public class Letter : MonoBehaviour
 
     private void SetLetterCooldown(Letter letter)
     {
-        CheckGameStart(letter);
         StartCoroutine(Cooldown());
-    }
-
-    private void CheckGameStart(Letter letter)
-    {
-        if (StateController.GetCurrentState() == State.StateType.PreStart)
-        {
-            WordManager.s_instance.StartRound();
-            Timer.s_instance.StartTimer();
-        }
     }
 
     public void Reset() {
@@ -88,19 +78,12 @@ public class Letter : MonoBehaviour
         }
 
         HandleTouch();
-        HandleKeypress();
     }
 
     private IEnumerator DelayedResetCooldowns()
     {
         yield return null;
         ResetCooldowns = false;
-    }
-
-    private void HandleKeypress() {
-        if (Input.GetKeyDown(Character.ToString().ToLower())) {
-            HandleLetterClicked();
-        }
     }
 
     private void HandleTouch() {
@@ -116,6 +99,8 @@ public class Letter : MonoBehaviour
 
     private void HandleLetterClicked() {
         if (StateController.GetCurrentState() == State.StateType.PreStart) {
+            WordManager.s_instance.StartRound();
+            Timer.s_instance.StartTimer();
             e_OnLetterClicked?.Invoke(this);
         } else if (StateController.GetCurrentState() == State.StateType.Buy) {
             if (LetterState.Equals(LetterState.Default)) {
