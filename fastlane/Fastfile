@@ -42,6 +42,7 @@ platform :ios do
       xcodeproj: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
       plist_path: 'Info.plist',
       block: proc do |plist|
+        plist['UIDeviceFamily'] = [2]
         plist['ITSAppUsesNonExemptEncryption'] = false
       end
     )
@@ -75,7 +76,7 @@ platform :ios do
     build_app( #alias: gym
       project: "#{ENV['IOS_BUILD_PATH']}/iOS/Unity-iPhone.xcodeproj",
       scheme: 'Unity-iPhone',
-      xcargs: '-allowProvisioningUpdates'
+      xcargs: '-allowProvisioningUpdates TARGETED_DEVICE_FAMILY=2'
     )
   end
 
