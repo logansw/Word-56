@@ -310,11 +310,11 @@ public class WordManager : MonoBehaviour {
             }
             else if (letter.IsVowel())
             {
-                if (IsSecondChance && (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                if (IsSecondChance && (LettersRemaining == 15 || LettersRemaining == 14 || LettersRemaining == 13 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
                 {
                     state = LetterState.Disabled;
                 }
-                else if (!IsSecondChance && (LettersRemaining == 13 || LettersRemaining == 12 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                else if (!IsSecondChance && (LettersRemaining == 13 || LettersRemaining == 12 || LettersRemaining == 11 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
                 {
                     state = LetterState.Disabled;
                 }
