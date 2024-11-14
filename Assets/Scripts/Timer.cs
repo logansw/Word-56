@@ -7,7 +7,6 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     public static Timer s_instance;
-    private const int SOLVE_TIME = 120;
     [SerializeField] private TMP_Text _text;
     private Coroutine _updateCoroutine;
     private int _secondsRemaining;
@@ -22,7 +21,13 @@ public class Timer : MonoBehaviour
         StopTimer();
     }
 
-    public void StartTimer(int time = SOLVE_TIME)
+    public void StartTimer()
+    {
+        _secondsRemaining = ConfigurationManager.s_instance.SolveTime;
+        _updateCoroutine = StartCoroutine(UpdateStopwatch());
+    }
+
+    public void StartTimer(int time)
     {
         _secondsRemaining = time;
         _updateCoroutine = StartCoroutine(UpdateStopwatch());
