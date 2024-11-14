@@ -364,20 +364,17 @@ public class WordManager : MonoBehaviour {
         Timer.s_instance.StartTimer(40);
         foreach (Letter letter in Letters)
         {
+            if (letter.LetterState == LetterState.Disabled)
+            {
+                letter.LetterState = LetterState.Default;
+            }
+
             if (letter.IsVowel())
             {
-                if (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
+                if (LettersRemaining == 15 || LettersRemaining == 14 || LettersRemaining == 13 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
                 {
                     letter.LetterState = LetterState.Disabled;
                 }
-                else
-                {
-                    letter.LetterState = LetterState.Default;
-                }
-            }
-            else if (letter.LetterState == LetterState.Disabled)
-            {
-                letter.LetterState = LetterState.Default;
             }
         }
         RenderLetters();
