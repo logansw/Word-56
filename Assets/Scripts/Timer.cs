@@ -6,7 +6,7 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    public static Timer s_instance;    
+    public static Timer s_instance;
     private const int SOLVE_TIME = 120;
     [SerializeField] private TMP_Text _text;
     private Coroutine _updateCoroutine;
