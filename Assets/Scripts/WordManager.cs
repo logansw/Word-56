@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using UnityEngine.AI;
 using System.Linq;
 using Unity.VisualScripting.FullSerializer;
+using System.Data;
 
 public class WordManager : MonoBehaviour {
     // Static
@@ -61,6 +62,7 @@ public class WordManager : MonoBehaviour {
     public bool IsSecondChance;
     public bool Victory;
     public TMP_Text FinalAnswerText;
+    private int _vowelsPurchased;
 
 
     void Awake() {
@@ -119,6 +121,9 @@ public class WordManager : MonoBehaviour {
             Debug.Log(e.Message);
         }
 
+        LettersRemaining = _configMan.LetterGuesses;
+        SolvesRemaining = _configMan.WordGuesses;
+        _vowelsPurchased = 0;
         SetLetterStates();
         _initialized = true;
     }
@@ -134,10 +139,11 @@ public class WordManager : MonoBehaviour {
         {
             letter.Reset();
         }
-        LettersRemaining = 13;
-        SolvesRemaining = 3;
+        LettersRemaining = _configMan.LetterGuesses;
+        SolvesRemaining = _configMan.WordGuesses;
         SetLetterStates();
         Victory = false;
+        _vowelsPurchased = 0;
     }
 
     public void ChooseWords()
@@ -147,6 +153,14 @@ public class WordManager : MonoBehaviour {
         if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6)
         {
             Debug.Log("Invalid word lengths.");
+            if (wordA.Trim().Length != 5)
+            {
+                Debug.Log("Word A: " + wordA);
+            }
+            if (wordB.Trim().Length != 6)
+            {
+                Debug.Log("Word B: " + wordB);
+            }
         }
         WordA = wordA;
         WordB = wordB;
@@ -232,7 +246,6 @@ public class WordManager : MonoBehaviour {
         }
         RenderLetters();
         SelectedLetter = '\0';
-
     }
 
     public void SubmitSolveAttempt() {
@@ -255,6 +268,7 @@ public class WordManager : MonoBehaviour {
     private void Solve()
     {
         Victory = true;
+        StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         HighscoreWriter.s_Instance.CheckOnLeaderboard();
         AudioManager.s_instance.Victory.Play();
         Timer.s_instance.StopTimer();
@@ -294,12 +308,14 @@ public class WordManager : MonoBehaviour {
         letter.Purchased = true;
         if (letter.IsVowel()) {
             VowelPurchasedLastRound = true;
+            _vowelsPurchased++;
         } else {
             VowelPurchasedLastRound = false;
         }
     }
 
     private void SetLetterStates() {
+        int lettersGuessed = _configMan.LetterGuesses - LettersRemaining;
         foreach (Letter letter in Letters)
         {
             LetterState state = LetterState.Default;
@@ -310,11 +326,15 @@ public class WordManager : MonoBehaviour {
             }
             else if (letter.IsVowel())
             {
-                if (IsSecondChance && (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                if (_vowelsPurchased >= _configMan.VowelGuesses)
                 {
                     state = LetterState.Disabled;
                 }
-                else if (!IsSecondChance && (LettersRemaining == 13 || LettersRemaining == 12 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                else if (IsSecondChance && (lettersGuessed + 2 < 3 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
+                {
+                    state = LetterState.Disabled;
+                }
+                else if (!IsSecondChance && (lettersGuessed < 3 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound)))
                 {
                     state = LetterState.Disabled;
                 }
@@ -356,6 +376,7 @@ public class WordManager : MonoBehaviour {
         {
             return;
         }
+        int lettersGuessed = _configMan.LetterGuesses - LettersRemaining;
         IsSecondChance = true;
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         GameManager.s_instance.SetActivePanel(0);
@@ -364,20 +385,21 @@ public class WordManager : MonoBehaviour {
         Timer.s_instance.StartTimer(40);
         foreach (Letter letter in Letters)
         {
+            if (letter.LetterState == LetterState.Disabled)
+            {
+                letter.LetterState = LetterState.Default;
+            }
+
             if (letter.IsVowel())
             {
-                if (LettersRemaining == 15 || LettersRemaining == 14 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
+                if (_vowelsPurchased >= _configMan.VowelGuesses)
                 {
                     letter.LetterState = LetterState.Disabled;
                 }
-                else
+                else if (lettersGuessed + 2 < 3 || (!_configMan.ConsecutiveVowelsAllowed && VowelPurchasedLastRound))
                 {
-                    letter.LetterState = LetterState.Default;
+                    letter.LetterState = LetterState.Disabled;
                 }
-            }
-            else if (letter.LetterState == LetterState.Disabled)
-            {
-                letter.LetterState = LetterState.Default;
             }
         }
         RenderLetters();

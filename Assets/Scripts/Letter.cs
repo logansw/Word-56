@@ -176,10 +176,11 @@ public class Letter : MonoBehaviour
         }
         _onCooldown = true;
         float t = 0f;
-        while (t < 1.0f)
+        float duration = 1.5f;
+        while (t < duration)
         {
             t += Time.deltaTime;
-            _cooldownMask.transform.localScale = new Vector2(1, Mathf.Lerp(1, 0, t));
+            _cooldownMask.transform.localScale = new Vector2(1, Mathf.Lerp(1, 0, t / duration));
             yield return null;
         }
         EndCooldown();
