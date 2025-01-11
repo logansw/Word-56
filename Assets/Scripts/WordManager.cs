@@ -94,7 +94,7 @@ public class WordManager : MonoBehaviour {
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
-                    string[] words = line.Split('\t');
+                    string[] words = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
                     FiveLetterWords.AddRange(words);
                 }
             }
@@ -111,7 +111,7 @@ public class WordManager : MonoBehaviour {
             using (StreamReader reader = new StreamReader(filepathSix)) {
                 while (!reader.EndOfStream) {
                     string line = reader.ReadLine();
-                    string[] words = line.Split('\t');
+                    string[] words = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
                     SixLetterWords.AddRange(words);
                 }
             }
