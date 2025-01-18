@@ -148,8 +148,8 @@ public class WordManager : MonoBehaviour {
 
     public void ChooseWords()
     {
-        string wordA = ChooseRandomWord(FiveLetterWords, ConfigurationManager.s_instance.IsDailyMode);
-        string wordB = ChooseRandomWord(SixLetterWords, ConfigurationManager.s_instance.IsDailyMode);
+        string wordA = ChooseRandomWord(FiveLetterWords, false);
+        string wordB = ChooseRandomWord(SixLetterWords, false);
         if (wordA.Trim().Length != 5 || wordB.Trim().Length != 6)
         {
             Debug.Log("Invalid word lengths.");

@@ -42,7 +42,7 @@ public class HighscoreWriter : MonoBehaviour
             _nameInputField.text = "Anonymous";
         }
         PlayerPrefs.SetString("PreviousName", _nameInputField.text);
-        bool daily = ConfigurationManager.s_instance.IsDailyMode;
+        bool daily = false;
         HighscoreData highscoreData = GetHighscoreData(daily);
         List<HighscoreData.Entry> entries = highscoreData.Highscores;
         HighscoreData.Entry targetEntry = new HighscoreData.Entry(_nameInputField.text, 0, 0, 0, 0);
