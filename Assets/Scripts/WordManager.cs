@@ -65,6 +65,9 @@ public class WordManager : MonoBehaviour {
     public bool Victory;
     public TMP_Text FinalAnswerText;
     private int _vowelsPurchased;
+    [SerializeField] private List<EnablerDisabler> _toEnable;
+    [SerializeField] private List<EnablerDisabler> _toDisable;
+    
 
 
     void Awake() {
@@ -257,7 +260,7 @@ public class WordManager : MonoBehaviour {
         if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB)
         {
             AudioManager.s_instance.Victory.Play();
-            Timer.s_instance.StopTimer();
+            Timer.s_instance.PauseTimer();
             StartCoroutine(AnimateSolve());
         }
         else
@@ -309,7 +312,7 @@ public class WordManager : MonoBehaviour {
     private void Solve()
     {
         Victory = true;
-        StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
+        StateController.s_instance.ChangeState(StateController.s_instance.VictoryState);
         HighscoreWriter.s_Instance.CheckOnLeaderboard();
         HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
         int currentLevel = PlayerPrefs.GetInt("DifficultyLevel", 1);
@@ -319,6 +322,28 @@ public class WordManager : MonoBehaviour {
             PlayerPrefs.SetInt("DifficultyLevel", currentLevel);
         }
         ConfigurationManager.s_instance.SetDifficultyLevel(currentLevel);
+        foreach (EnablerDisabler enablerDisabler in _toEnable)
+        {
+            enablerDisabler.SetButtonEnabled(true);
+        }
+        foreach (EnablerDisabler enablerDisabler in _toDisable)
+        {
+            enablerDisabler.SetButtonEnabled(false);
+        }
+        for (int i = 0; i < WordA.Length; i++)
+        {
+            char c = WordA[i];
+            RevealLetter(c, i);
+        }
+        for (int i = 0; i < WordB.Length; i++)
+        {
+            char c = WordB[i];
+            RevealLetter(c, 5+i);
+        }
+        foreach (SolveLetter solveLetter in SolveLetters)
+        {
+            solveLetter.SetSolved();
+        }
     }
 
     private void HandleGuess(Letter letter) {

@@ -24,7 +24,7 @@ public class Timer : MonoBehaviour
 
     void OnDisable()
     {
-        StopTimer();
+        PauseTimer();
     }
 
     public void StartTimer()
@@ -41,9 +41,17 @@ public class Timer : MonoBehaviour
 
     public void Resume()
     {
-        if (StateController.GetCurrentState() != State.StateType.PreStart)
+        if (StateController.GetCurrentState() == State.StateType.Buy || StateController.GetCurrentState() == State.StateType.Solve)
         {
             StartTimer(_secondsRemaining);
+        }
+    }
+
+    public void PauseTimer()
+    {
+        if (_updateCoroutine != null)
+        {
+            StopCoroutine(_updateCoroutine);
         }
     }
 

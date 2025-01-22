@@ -17,7 +17,6 @@ public class PauseButton : MonoBehaviour
         Time.timeScale = 0f;
         _obfuscator.SetActive(true);
         _mainScreen.SetActive(false);
-        Debug.Log(Time.timeScale);
     }
 
     public void Resume()
@@ -25,6 +24,5 @@ public class PauseButton : MonoBehaviour
         Time.timeScale = 1f;
         _obfuscator.SetActive(false);
         _mainScreen.SetActive(true);
-        Debug.Log(Time.timeScale);
     }
 }

@@ -3452,6 +3452,15 @@ MonoBehaviour:
   IsSecondChance: 0
   Victory: 0
   FinalAnswerText: {fileID: 1591676712}
+  _toEnable:
+  - {fileID: 890747542}
+  _toDisable:
+  - {fileID: 1657478623}
+  - {fileID: 1763496606}
+  - {fileID: 942416419}
+  - {fileID: 1464641914}
+  - {fileID: 273824699}
+  - {fileID: 2128887276}
 --- !u!4 &541894803
 Transform:
   m_ObjectHideFlags: 0
@@ -8324,7 +8333,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 736, y: -610}
+  m_AnchoredPosition: {x: 833, y: -30}
   m_SizeDelta: {x: 212.28, y: 111.04}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1464641914
@@ -8681,102 +8690,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Title
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1657478623}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1763496606}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 942416419}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1464641914}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 273824699}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 534007333}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 890747542}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 2113918387}
-        m_TargetAssemblyTypeName: EnablerDisabler, Assembly-CSharp
-        m_MethodName: SetButtonEnabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1509216962
