@@ -10,6 +10,8 @@ using UnityEngine.AI;
 using System.Linq;
 using Unity.VisualScripting.FullSerializer;
 using System.Data;
+using UnityEngine.U2D;
+using Unity.VisualScripting;
 
 public class WordManager : MonoBehaviour {
     // Static
@@ -252,9 +254,14 @@ public class WordManager : MonoBehaviour {
         SolvesRemaining--;
         // Check if the solve attempt is correct
         string solveAttempt = GetCurrentGuess();
-        if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB) {
-            Solve();
-        } else {
+        if (solveAttempt.Substring(0, 5) == WordA && solveAttempt.Substring(5, 6) == WordB)
+        {
+            AudioManager.s_instance.Victory.Play();
+            Timer.s_instance.StopTimer();
+            StartCoroutine(AnimateSolve());
+        }
+        else
+        {
             CancelSolveAttempt();
             AudioManager.s_instance.Negative.Play();
             if (SolvesRemaining <= 0)
@@ -265,13 +272,45 @@ public class WordManager : MonoBehaviour {
         }
     }
 
+    private IEnumerator AnimateSolve()
+    {
+        for (int i = 0; i < SolveLetters.Count; i++)
+        {
+            StartCoroutine(AnimateLetter(SolveLetters[i]));
+            yield return new WaitForSeconds(0.12f);
+        }
+        yield return new WaitForSeconds(0.5f);
+        Solve();
+    }
+
+    private IEnumerator AnimateLetter(SolveLetter solveLetter)
+    {
+        float timeDelta = 0;
+        float duration = 0.25f;
+        Vector2 originalPosition = solveLetter.transform.position;
+        while (timeDelta < duration)
+        {
+            timeDelta += Time.deltaTime;
+            float t = timeDelta / duration;
+            if (t < 0.5f)
+            {
+                solveLetter.transform.localPosition += new Vector3(0f, Time.deltaTime * 2f, 0f);
+            }
+            else if (t >= 0.5f)
+            {
+                solveLetter.SetSolved();
+                solveLetter.transform.localPosition -= new Vector3(0f, Time.deltaTime * 2f, 0f);
+            }
+            yield return null;
+        }
+        solveLetter.transform.position = originalPosition;
+    }
+
     private void Solve()
     {
         Victory = true;
         StateController.s_instance.ChangeState(StateController.s_instance.BuyState);
         HighscoreWriter.s_Instance.CheckOnLeaderboard();
-        AudioManager.s_instance.Victory.Play();
-        Timer.s_instance.StopTimer();
         HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
         int currentLevel = PlayerPrefs.GetInt("DifficultyLevel", 1);
         if (currentLevel < ConfigurationManager.MAX_LEVELS)

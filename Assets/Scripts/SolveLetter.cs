@@ -51,6 +51,11 @@ public class SolveLetter : MonoBehaviour
         _spriteRenderer.color = Color.white;
     }
 
+    public void SetSolved()
+    {
+        _spriteRenderer.color = Color.green;
+    }
+
     public void Clear()
     {
         Character = '\0';
