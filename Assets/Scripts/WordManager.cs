@@ -273,6 +273,13 @@ public class WordManager : MonoBehaviour {
         AudioManager.s_instance.Victory.Play();
         Timer.s_instance.StopTimer();
         HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
+        int currentLevel = PlayerPrefs.GetInt("DifficultyLevel", 1);
+        if (currentLevel < ConfigurationManager.MAX_LEVELS)
+        {
+            currentLevel++;
+            PlayerPrefs.SetInt("DifficultyLevel", currentLevel);
+        }
+        ConfigurationManager.s_instance.SetDifficultyLevel(currentLevel);
     }
 
     private void HandleGuess(Letter letter) {

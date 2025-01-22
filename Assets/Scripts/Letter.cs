@@ -36,6 +36,7 @@ public class Letter : MonoBehaviour
     {
         e_OnLetterClicked -= SetLetterCooldown;
         DefeatState.e_OnDefeat -= EndCooldown;
+        EndCooldown();
     }
 
     public void Initialize() {

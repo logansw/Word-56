@@ -42,8 +42,7 @@ public class HighscoreWriter : MonoBehaviour
             _nameInputField.text = "Anonymous";
         }
         PlayerPrefs.SetString("PreviousName", _nameInputField.text);
-        bool daily = false;
-        HighscoreData highscoreData = GetHighscoreData(daily);
+        HighscoreData highscoreData = GetHighscoreData(ConfigurationManager.s_instance.CurrentLevel);
         List<HighscoreData.Entry> entries = highscoreData.Highscores;
         HighscoreData.Entry targetEntry = new HighscoreData.Entry(_nameInputField.text, 0, 0, 0, 0);
         for (int i = 0; i < entries.Count; i++)
@@ -83,7 +82,7 @@ public class HighscoreWriter : MonoBehaviour
         highscoreData.Highscores.Add(targetEntry);
         highscoreData.Highscores = SortAndTruncateHighscores(highscoreData.Highscores);
 
-        string path = daily ? "_dailyScores.json" : "_endlessScores.json";
+        string path = $"Difficulty{ConfigurationManager.s_instance.CurrentLevel}Scores.json";
         JSONTool.WriteData<HighscoreData>(highscoreData, path);
         SceneManager.LoadScene("Title");
     }
@@ -103,16 +102,9 @@ public class HighscoreWriter : MonoBehaviour
         return highscoresTruncated;
     }
 
-    private HighscoreData GetHighscoreData(bool daily)
+    private HighscoreData GetHighscoreData(int difficultyLevel)
     {
-        if (daily)
-        {
-            return JSONTool.ReadData<HighscoreData>("_dailyScores.json");
-        }
-        else
-        {
-            return JSONTool.ReadData<HighscoreData>("_endlessScores.json");
-        }
+        return JSONTool.ReadData<HighscoreData>($"Difficulty{difficultyLevel}Scores.json");
     }
 
     public void SetOutcomeText(bool victory, bool secondChance)

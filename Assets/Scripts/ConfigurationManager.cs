@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class ConfigurationManager : MonoBehaviour
 {
+    public const int MAX_LEVELS = 5;
     // Static
     public static ConfigurationManager s_instance;
 

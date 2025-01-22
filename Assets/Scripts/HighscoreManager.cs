@@ -5,46 +5,37 @@ using System.Text;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class HighscoreManager : MonoBehaviour
 {
     public static HighscoreManager s_instance;
     public const int MAX_ENTRIES = 100;
     public const int ENTRIES_PER_PAGE = 5;
-    private HighscoreData _dailyScores;
-    private HighscoreData _endlessScores;
+    private List<HighscoreData> _highscores;
     [SerializeField] private EntryUI[] _entryUIs;
     [SerializeField] private GameObject _entriesPanel;
     private int _currentPage;
     private HighscoreData _currentDataOpen;
-    [SerializeField] private Button _dailyButton;
-    [SerializeField] private Button _endlessButton;
     [SerializeField] private TMP_Text _headerText;
 
     private void Awake()
     {
         s_instance = this;
-        _dailyScores = JSONTool.ReadData<HighscoreData>("_dailyScores.json");
-        _endlessScores = JSONTool.ReadData<HighscoreData>("_endlessScores.json");
+        _highscores = new List<HighscoreData>();
+        for (int i = 0; i < 5; i++)
+        {
+            string fileName = $"Difficulty{i+1}Scores.json";
+            _highscores.Add(JSONTool.ReadData<HighscoreData>(fileName));
+        }
 
         _currentPage = 0;
     }
 
-    public void OpenScores(bool daily)
+    public void OpenScores(int difficultyLevel)
     {
-        if (daily)
-        {
-            _headerText.text = "Daily Highscores";
-            _dailyButton.gameObject.SetActive(false);
-            _endlessButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            _headerText.text = "Endless Highscores";
-            _dailyButton.gameObject.SetActive(true);
-            _endlessButton.gameObject.SetActive(false);
-        }
-        _currentDataOpen = GetHighscoreData(daily);
+        _headerText.text = "Highscores";
+        _currentDataOpen = GetHighscoreData(difficultyLevel);
         _currentPage = 0;
         _entriesPanel.gameObject.SetActive(true);
         _currentDataOpen.Highscores.Sort((x, y) => y.CompareTo(x));
@@ -104,24 +95,18 @@ public class HighscoreManager : MonoBehaviour
         _entriesPanel.gameObject.SetActive(false);
     }
 
-    private HighscoreData GetHighscoreData(bool daily)
+    private HighscoreData GetHighscoreData(int difficultyLevel)
     {
-        if (daily)
-        {
-            return _dailyScores;
-        }
-        else
-        {
-            return _endlessScores;
-        }
+        return _highscores[difficultyLevel - 1];
     }
 
     public void ClearHighscores()
     {
-        _dailyScores.Highscores.Clear();
-        _endlessScores.Highscores.Clear();
-        JSONTool.WriteData(_dailyScores, "_dailyScores.json");
-        JSONTool.WriteData(_endlessScores, "_endlessScores.json");
+        for (int i = 0; i < 5; i++)
+        {
+            _highscores[i].Highscores.Clear();
+            JSONTool.WriteData(_highscores[i], $"Difficulty{i+1}Scores.json");
+        }
         DisplayScores(0);
     }
 }

@@ -16,6 +16,12 @@ public class Timer : MonoBehaviour
         s_instance = this;
     }
 
+    void OnEnable()
+    {
+        _text.color = Color.black;
+        Resume();
+    }
+
     void OnDisable()
     {
         StopTimer();
@@ -31,6 +37,14 @@ public class Timer : MonoBehaviour
     {
         _secondsRemaining = time;
         _updateCoroutine = StartCoroutine(UpdateStopwatch());
+    }
+
+    public void Resume()
+    {
+        if (StateController.GetCurrentState() != State.StateType.PreStart)
+        {
+            StartTimer(_secondsRemaining);
+        }
     }
 
     public void StopTimer()
@@ -58,6 +72,23 @@ public class Timer : MonoBehaviour
                 StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
                 yield break;
             }
+            else if (_secondsRemaining == 15)
+            {
+                StartCoroutine(Blink());
+            }
         }
+    }
+
+    private IEnumerator Blink()
+    {
+        _text.color = Color.white;
+        yield return new WaitForSecondsRealtime(0.25f);
+        _text.color = Color.red;
+        yield return new WaitForSecondsRealtime(0.25f);
+        _text.color = Color.white;
+        yield return new WaitForSecondsRealtime(0.25f);
+        _text.color = Color.red;
+        yield return new WaitForSecondsRealtime(0.25f);
+        _text.color = Color.black;
     }
 }
