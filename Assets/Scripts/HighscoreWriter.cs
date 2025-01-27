@@ -33,6 +33,13 @@ public class HighscoreWriter : MonoBehaviour
         }
     }
 
+    public void ShowHighscoreEntry()
+    {
+        _mainPanel.SetActive(false);
+        _addHighscorePanel.SetActive(true);
+        WordManager.s_instance.FreezeGame();
+    }
+
     public void SaveHighscore()
     {
         if (_nameInputField.text.Length == 0)

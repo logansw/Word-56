@@ -315,6 +315,7 @@ public class WordManager : MonoBehaviour {
         StateController.s_instance.ChangeState(StateController.s_instance.VictoryState);
         HighscoreWriter.s_Instance.CheckOnLeaderboard();
         HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
+        FreezeGame();
         int currentLevel = PlayerPrefs.GetInt("DifficultyLevel", 1);
         if (currentLevel < ConfigurationManager.MAX_LEVELS)
         {
@@ -322,14 +323,6 @@ public class WordManager : MonoBehaviour {
             PlayerPrefs.SetInt("DifficultyLevel", currentLevel);
         }
         ConfigurationManager.s_instance.SetDifficultyLevel(currentLevel);
-        foreach (EnablerDisabler enablerDisabler in _toEnable)
-        {
-            enablerDisabler.SetButtonEnabled(true);
-        }
-        foreach (EnablerDisabler enablerDisabler in _toDisable)
-        {
-            enablerDisabler.SetButtonEnabled(false);
-        }
         for (int i = 0; i < WordA.Length; i++)
         {
             char c = WordA[i];
@@ -343,6 +336,18 @@ public class WordManager : MonoBehaviour {
         foreach (SolveLetter solveLetter in SolveLetters)
         {
             solveLetter.SetSolved();
+        }
+    }
+
+    public void FreezeGame()
+    {
+        foreach (EnablerDisabler enablerDisabler in _toEnable)
+        {
+            enablerDisabler.SetButtonEnabled(true);
+        }
+        foreach (EnablerDisabler enablerDisabler in _toDisable)
+        {
+            enablerDisabler.SetButtonEnabled(false);
         }
     }
 

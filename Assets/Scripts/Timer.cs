@@ -35,6 +35,10 @@ public class Timer : MonoBehaviour
 
     public void StartTimer(int time)
     {
+        if (_updateCoroutine != null)
+        {
+            StopCoroutine(_updateCoroutine);
+        }
         _secondsRemaining = time;
         _updateCoroutine = StartCoroutine(UpdateStopwatch());
     }
@@ -77,7 +81,9 @@ public class Timer : MonoBehaviour
             {
                 _text.text = "00:00";
                 HighscoreWriter.s_Instance.SetOutcomeText(false, WordManager.s_instance.IsSecondChance);
+                HighscoreWriter.s_Instance.ShowHighscoreEntry();
                 StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
+                WordManager.s_instance.FreezeGame();
                 yield break;
             }
             else if (_secondsRemaining == 15)
