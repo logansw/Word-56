@@ -316,13 +316,6 @@ public class WordManager : MonoBehaviour {
         HighscoreWriter.s_Instance.CheckOnLeaderboard();
         HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
         FreezeGame();
-        int currentLevel = PlayerPrefs.GetInt("DifficultyLevel", 1);
-        if (currentLevel < ConfigurationManager.MAX_LEVELS)
-        {
-            currentLevel++;
-            PlayerPrefs.SetInt("DifficultyLevel", currentLevel);
-        }
-        ConfigurationManager.s_instance.SetDifficultyLevel(currentLevel);
         for (int i = 0; i < WordA.Length; i++)
         {
             char c = WordA[i];
