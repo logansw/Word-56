@@ -128,7 +128,7 @@ public class HighscoreWriter : MonoBehaviour
         }
         else
         {
-            _outcomeText.text = $"Defeat (+0)";
+            _outcomeText.text = $"Better luck next time (+0)";
         }
     }
 }
