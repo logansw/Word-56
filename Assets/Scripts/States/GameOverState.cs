@@ -15,7 +15,9 @@ public class GameOverState : State
     }
     public override void OnEnter(StateController stateController)
     {
-        GameManager.s_instance.SetActivePanel(1);
+        // GameManager.s_instance.SetActivePanel(2);
+        WordManager.s_instance.FreezeGame();
+        HighscoreWriter.s_Instance.CheckOnLeaderboard();
     }
 
     public override void UpdateState(StateController stateController)

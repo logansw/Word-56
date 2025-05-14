@@ -3,25 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefeatState : State
+public class SecondChanceState : State
 {
-    public static Action e_OnDefeat;
+    public static Action e_OnSecondChanceAsk; // Triggered upon entering second chance screen
 
-    public DefeatState()
+    public SecondChanceState()
     {
-        GameState = StateType.Defeat;
+        GameState = StateType.SecondChance;
     }
 
     public override void OnEnter(StateController stateController)
     {
-        if (!WordManager.s_instance.IsSecondChance)
-        {
-            GameManager.s_instance.SetActivePanel(2);
-        }
-        else
-        {
-            HighscoreWriter.s_Instance.CheckOnLeaderboard();
-        }
+        GameManager.s_instance.SetActivePanel(1);
     }
 
     public override void UpdateState(StateController stateController)

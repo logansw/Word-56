@@ -18,8 +18,7 @@ public class StateController : MonoBehaviour
     public BuyState BuyState;
     public SolveState SolveState;
     public GameOverState GameOverState;
-    public DefeatState DefeatState;
-    public VictoryState VictoryState;
+    public SecondChanceState SecondChanceState;
     private State _previousState;
 
     void Awake() {

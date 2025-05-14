@@ -21,6 +21,10 @@ public class HighscoreManager : MonoBehaviour
 
     private void Awake()
     {
+        if (s_instance != null)
+        {
+            Destroy(s_instance);
+        }
         s_instance = this;
         _highscores = new List<HighscoreData>();
         for (int i = 0; i < 5; i++)
@@ -30,9 +34,10 @@ public class HighscoreManager : MonoBehaviour
         }
 
         _currentPage = 0;
+        LoadScores(1);
     }
 
-    public void OpenScores(int difficultyLevel)
+    public void LoadScores(int difficultyLevel)
     {
         _headerText.text = "Highscores";
         _currentDataOpen = GetHighscoreData(difficultyLevel);

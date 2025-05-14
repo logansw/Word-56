@@ -82,7 +82,14 @@ public class Timer : MonoBehaviour
                 _text.text = "00:00";
                 HighscoreWriter.s_Instance.SetOutcomeText(false, WordManager.s_instance.IsSecondChance);
                 HighscoreWriter.s_Instance.ShowHighscoreEntry();
-                StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
+                if (WordManager.s_instance.IsSecondChance)
+                {
+                    StateController.s_instance.ChangeState(StateController.s_instance.SecondChanceState);
+                }
+                else
+                {
+                    StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);                    
+                }
                 WordManager.s_instance.FreezeGame();
                 yield break;
             }
