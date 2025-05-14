@@ -12,17 +12,16 @@ public class HighscoreWriter : MonoBehaviour
     [SerializeField] private GameObject _mainPanel;
     public static HighscoreWriter s_Instance;
     [SerializeField] private TMP_Text _outcomeText;
+    private bool _recorded;
 
     void Awake()
     {
-        if (s_Instance == null)
+        if (s_Instance != null)
         {
-            s_Instance = this;
+            Destroy(s_Instance.gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        s_Instance = this;
+        _recorded = false;
     }
 
     public void CheckOnLeaderboard()
@@ -37,23 +36,31 @@ public class HighscoreWriter : MonoBehaviour
     {
         _mainPanel.SetActive(false);
         _addHighscorePanel.SetActive(true);
-        WordManager.s_instance.FreezeGame();
+    }
+    
+    public void SetName()
+    {
+        PlayerPrefs.SetString("PreviousName", _nameInputField.text);
     }
 
     public void SaveHighscore()
     {
+        if (!StateController.GetCurrentState().Equals(State.StateType.GameOver) || _recorded)
+        {
+            return;
+        }
         if (_nameInputField.text.Length == 0)
         {
             _nameInputField.text = "Anonymous";
         }
-        PlayerPrefs.SetString("PreviousName", _nameInputField.text);
         HighscoreData highscoreData = GetHighscoreData(ConfigurationManager.s_instance.CurrentLevel);
         List<HighscoreData.Entry> entries = highscoreData.Highscores;
-        HighscoreData.Entry targetEntry = new HighscoreData.Entry(_nameInputField.text, 0, 0, 0, 0);
+        string currentName = PlayerPrefs.GetString("PreviousName");
+        HighscoreData.Entry targetEntry = new HighscoreData.Entry(currentName, 0, 0, 0, 0);
         for (int i = 0; i < entries.Count; i++)
         {
             HighscoreData.Entry entry = entries[i];
-            if (entry.Name == _nameInputField.text)
+            if (entry.Name == currentName)
             {
                 targetEntry = entry;
                 entries.Remove(entry);
@@ -89,7 +96,7 @@ public class HighscoreWriter : MonoBehaviour
 
         string path = $"Difficulty{ConfigurationManager.s_instance.CurrentLevel}Scores.json";
         JSONTool.WriteData<HighscoreData>(highscoreData, path);
-        SceneManager.LoadScene("Title");
+        _recorded = true;
     }
 
     private List<HighscoreData.Entry> SortAndTruncateHighscores(List<HighscoreData.Entry> highscores)

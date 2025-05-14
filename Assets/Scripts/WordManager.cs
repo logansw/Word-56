@@ -269,7 +269,14 @@ public class WordManager : MonoBehaviour {
             AudioManager.s_instance.Negative.Play();
             if (SolvesRemaining <= 0)
             {
-                StateController.s_instance.ChangeState(StateController.s_instance.DefeatState);
+                if (IsSecondChance)
+                {
+                    StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);
+                }
+                else
+                {
+                    StateController.s_instance.ChangeState(StateController.s_instance.SecondChanceState);
+                }
                 HighscoreWriter.s_Instance.SetOutcomeText(false, IsSecondChance);
             }
         }
@@ -312,10 +319,8 @@ public class WordManager : MonoBehaviour {
     private void Solve()
     {
         Victory = true;
-        StateController.s_instance.ChangeState(StateController.s_instance.VictoryState);
-        HighscoreWriter.s_Instance.CheckOnLeaderboard();
         HighscoreWriter.s_Instance.SetOutcomeText(true, IsSecondChance);
-        FreezeGame();
+        StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);
         for (int i = 0; i < WordA.Length; i++)
         {
             char c = WordA[i];
@@ -341,6 +346,27 @@ public class WordManager : MonoBehaviour {
         foreach (EnablerDisabler enablerDisabler in _toDisable)
         {
             enablerDisabler.SetButtonEnabled(false);
+        }
+        
+        for (int i = 0; i < SolveLetters.Count; i++)
+        {
+            SolveLetter solveLetter = SolveLetters[i];
+
+            if (solveLetter.Status == SolveStatus.Correct)
+            {
+                solveLetter.SetSolved();
+            }
+            else if (solveLetter.Status == SolveStatus.Blank)
+            {
+                if (i < WordA.Length)
+                {
+                    solveLetter.SetGuess(WordA[i]);
+                }
+                else
+                {
+                    solveLetter.SetGuess(WordB[i - WordA.Length]);
+                }
+            }
         }
     }
 

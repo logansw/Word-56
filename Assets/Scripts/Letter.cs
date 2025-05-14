@@ -29,13 +29,13 @@ public class Letter : MonoBehaviour
     void OnEnable()
     {
         e_OnLetterClicked += SetLetterCooldown;
-        DefeatState.e_OnDefeat += EndCooldown;
+        SecondChanceState.e_OnSecondChanceAsk += EndCooldown;
     }
 
     void OnDisable()
     {
         e_OnLetterClicked -= SetLetterCooldown;
-        DefeatState.e_OnDefeat -= EndCooldown;
+        SecondChanceState.e_OnSecondChanceAsk -= EndCooldown;
         EndCooldown();
     }
 
@@ -134,10 +134,10 @@ public class Letter : MonoBehaviour
                     _spriteRenderer.color = Color.white;
                     break;
                 case LetterState.Correct:
-                    _spriteRenderer.color = Color.black;
+                    _spriteRenderer.color = Color.green;
                     break;
                 case LetterState.Incorrect:
-                    _spriteRenderer.color = Color.black;
+                    _spriteRenderer.color = new Color(173f/255f, 36f/255f, 64f/255f);
                     break;
             }
         }
@@ -155,7 +155,7 @@ public class Letter : MonoBehaviour
                     _spriteRenderer.color = Color.green;
                     break;
                 case LetterState.Incorrect:
-                    _spriteRenderer.color = Color.black;
+                    _spriteRenderer.color = new Color(173f/255f, 36f/255f, 64f/255f);
                     break;
             }
         }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Runtime.ExceptionServices;
 
 public class HighscoreData : IJSONData<HighscoreData>
 {
@@ -55,7 +56,15 @@ public class HighscoreData : IJSONData<HighscoreData>
 
         public int CompareTo(Entry other)
         {
-            return AverageScore.CompareTo(other.AverageScore);
+            int first = AverageScore.CompareTo(other.AverageScore);
+            if (first == 0)
+            {
+                return TotalGames.CompareTo(other.TotalGames);
+            }
+            else
+            {
+                return first;
+            }
         }
     }
 }

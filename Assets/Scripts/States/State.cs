@@ -25,7 +25,7 @@ public class State : MonoBehaviour
         Solve,
         GameOver,
         Intermission,
-        Defeat,
+        SecondChance,
         Victory
     }
 }
