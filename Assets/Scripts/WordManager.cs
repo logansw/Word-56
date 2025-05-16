@@ -368,6 +368,7 @@ public class WordManager : MonoBehaviour {
                 }
             }
         }
+        Timer.s_instance.PauseTimer();
     }
 
     private void HandleGuess(Letter letter) {

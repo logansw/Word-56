@@ -80,17 +80,16 @@ public class Timer : MonoBehaviour
             if (_secondsRemaining <= 0)
             {
                 _text.text = "00:00";
-                HighscoreWriter.s_Instance.SetOutcomeText(false, WordManager.s_instance.IsSecondChance);
-                HighscoreWriter.s_Instance.ShowHighscoreEntry();
-                if (WordManager.s_instance.IsSecondChance)
+                if (!WordManager.s_instance.IsSecondChance)
                 {
                     StateController.s_instance.ChangeState(StateController.s_instance.SecondChanceState);
                 }
                 else
                 {
                     StateController.s_instance.ChangeState(StateController.s_instance.GameOverState);                    
+                    HighscoreWriter.s_Instance.SetOutcomeText(false, WordManager.s_instance.IsSecondChance);
+                    HighscoreWriter.s_Instance.ShowHighscoreEntry();
                 }
-                WordManager.s_instance.FreezeGame();
                 yield break;
             }
             else if (_secondsRemaining == 15)
